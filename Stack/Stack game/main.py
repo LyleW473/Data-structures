@@ -27,7 +27,7 @@ question_font = pygame.font.SysFont("Bahnschrift", 50)
 
 # Game variables
 time_counter = 5000 # 5 seconds in milliseconds
-spawn_stack = True # Determines whether we create a new stack instance or not
+generate_new_questions = True # Determines whether we need to generate a new question or not
 
 # Instances
 menu = Menu(0,0,screen)
@@ -47,15 +47,28 @@ def random_stack_list_generator():
     stack_list = []
     # Generate a random index, which will represent the index for the element where the player must reach before the time is up.
     random_index = random.randrange(0,5)
+    player_random_index = random.randrange(0,5)
+    print("random", random_index)
+    print("player", random_index)
+    
+    # In the case that the player spawning index and the goal index is the same, keep generating new indexes for the player
+    while player_random_index == random_index:  
+        player_random_index = random.randrange(0,5)
 
     # Create a stack list with 6 elements
     for i in range(0, 6):
-        # If the current index is not equal to the random index we generated earlier, set the item value as 0
-        if i != random_index:
-            item_value = 0
-        # Otherwise, set the item value as 1.
-        else:
+        # If the current index is equal to the random plyae rindex we generated earlier, set the item value as 2
+        if i == player_random_index:
+            item_value = 2
+
+        # If the current index is equal to the random index we generated earlier, set the item value as 1
+        elif i == random_index:
             item_value = 1
+
+        # If the current index is not equal to the random index we generated earlier or the player index, set the item value as 0
+        else:
+            item_value = 0
+
         # Append the items to the list used in the stack
         stack_list.append(item_value)
 
@@ -79,6 +92,13 @@ def random_question_generator():
 # variables (move up later)
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 70, 200, 50) # User input box rectangle
+
+# Instances
+
+# Generate a random list for the stack
+random_stack_list = random_stack_list_generator()
+# Create a new stack instance, feeding in the stack list as a parameter
+stack = Stack(random_stack_list)
 
 # Main loop
 run = True
@@ -123,17 +143,15 @@ while run:
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # STACK GAMEPLAY
         # Check if we need to spawn a stack.
-        if spawn_stack == True:
-            # Generate a random list for the stack
-            random_stack_list = random_stack_list_generator()
-            # Create a new stack instance, feeding in the stack list as a parameter
-            stack = Stack(random_stack_list)
+        if generate_new_questions == True:
+
             # We no longer need to spawn a stack so reset this variable
-            spawn_stack = False
+            generate_new_questions = False
 
             # Generate a question 
             current_question_answer, current_question = random_question_generator()
             print(current_question_answer, current_question)
+            print(stack.items_list)
 
         # Draw the stack
         stack.draw()
@@ -147,7 +165,8 @@ while run:
         pygame.draw.rect(screen, WHITE, user_input_rectangle, 5)
         screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 10))
         user_input_rectangle.width = max(200, text_image.get_width() + 10)
-    
+
+        
     
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -180,21 +199,23 @@ while run:
                     user_text = user_text[:-1]
 
                 # If the player wants to push an item onto the stack
-                elif event.key == K_j:
+                elif event.key == K_j and len(user_text) > 0:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
-                        # ---- ADD CODE TO PUSH AN ITEM ONTO THE STACK 
+                        # ---- ADD CODE TO TRAVEL UP THE STACK  
+                        stack.travel_up()
                     else:
                         print("Incorrect")
                         
 
                 # If the player wants to pop an item off the stack
-                elif event.key == K_k:
+                elif event.key == K_k and len(user_text) > 0:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
-                        # ---- ADD CODE TO POP AN ITEM OFF THE STACK 
+                        stack.travel_down()
+                        # ---- ADD CODE TO TRAVEL DOWN THE STACK
 
                     else:
                         print("Incorrect")
