@@ -21,7 +21,9 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 
 # Font
-time_font = pygame.font.SysFont("Bahnschrift", 150)
+time_font = pygame.font.SysFont("Bahnschrift", 100)
+user_input_font = pygame.font.SysFont("Bahnschrift", 40)
+question_font = pygame.font.SysFont("Bahnschrift", 50)
 
 # Game variables
 time_counter = 5000 # 5 seconds in milliseconds
@@ -60,7 +62,8 @@ def random_stack_list_generator():
     return stack_list
 
 def random_question_generator():
-    random_operation = random.randrange(0,3) # Add = 0, Subtract = 1, Multiply = 2, Division = 3 , could add MOD
+    # random_operation = random.randrange(0,3) # Add = 0, Subtract = 1, Multiply = 2, Division = 3 , could add MOD
+    random_operation = 0
     # Note: Maybe define these random numbers in the random operation sections. That way we can have harder addition questions but easier multiplication questions.
     random_number_1 = random.randrange(0,50)
     random_number_2 = random.randrange(0,50)
@@ -72,11 +75,10 @@ def random_question_generator():
 
     return answer, question
 
-current_question_answer, current_question = random_question_generator()
-print(current_question_answer, current_question)
 
-
-# Instances
+# variables (move up later)
+user_text = "" # Holds the numbers that the user types into the input box 
+user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 70, 200, 50) # User input box rectangle
 
 # Main loop
 run = True
@@ -97,9 +99,11 @@ while run:
     # INGAME
     if menu.in_game == True:
         screen.fill(BLUE)   
-
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # TIME
         # Draw the timer at the top of the screen
-        draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 360, 0)
+        draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 410, 0)
+        
 
         # Constantly check the time
         if pygame.time.get_ticks() - menu.entered_game_time > 1:
@@ -116,6 +120,8 @@ while run:
             if time_counter <= 0:
                 time_counter = 5000
 
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # STACK GAMEPLAY
         # Check if we need to spawn a stack.
         if spawn_stack == True:
             # Generate a random list for the stack
@@ -125,9 +131,23 @@ while run:
             # We no longer need to spawn a stack so reset this variable
             spawn_stack = False
 
+            # Generate a question 
+            current_question_answer, current_question = random_question_generator()
+            print(current_question_answer, current_question)
+
         # Draw the stack
         stack.draw()
 
+        # Draw the current question at the top of the screen
+        draw_text(current_question, question_font, RED, 400, 120)
+
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # USER INPUT
+        text_image = user_input_font.render(user_text, True, RED)
+        pygame.draw.rect(screen, WHITE, user_input_rectangle, 5)
+        screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 10))
+        user_input_rectangle.width = max(200, text_image.get_width() + 10)
+    
     
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -150,6 +170,45 @@ while run:
                     # Show the paused menu
                     menu.show_paused_menu = True
                     menu.in_game = False
+
+                # --------------------------------------------------------------------------------------------------
+                # QUESTION INPUT
+
+                # If the backspace key is pressed
+                if event.key == K_BACKSPACE:
+                    # Remove the last item inside the text
+                    user_text = user_text[:-1]
+
+                # If the player wants to push an item onto the stack
+                elif event.key == K_j:
+                    # Check if the user input is the same as the answer
+                    if int(user_text) == current_question_answer:
+                        print("Correct")
+                        # ---- ADD CODE TO PUSH AN ITEM ONTO THE STACK 
+                    else:
+                        print("Incorrect")
+                        
+
+                # If the player wants to pop an item off the stack
+                elif event.key == K_k:
+                    # Check if the user input is the same as the answer
+                    if int(user_text) == current_question_answer:
+                        print("Correct")
+                        # ---- ADD CODE TO POP AN ITEM OFF THE STACK 
+
+                    else:
+                        print("Incorrect")
+
+                # If the player has pressed any other key
+                else:   
+                    # Check the unicode number of the key and if it is a number from 0 to 9
+                    if 48 <= event.key <= 57:
+                        # Check that the player hasn't written more than 20 digits
+                        if len(user_text) <= 20:
+                            # Contacenate the key the user pressed to the user text
+                            user_text += event.unicode
+
+
 
 
 
