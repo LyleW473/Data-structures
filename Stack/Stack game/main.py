@@ -59,6 +59,23 @@ def random_stack_list_generator():
 
     return stack_list
 
+def random_question_generator():
+    random_operation = random.randrange(0,3) # Add = 0, Subtract = 1, Multiply = 2, Division = 3 , could add MOD
+    # Note: Maybe define these random numbers in the random operation sections. That way we can have harder addition questions but easier multiplication questions.
+    random_number_1 = random.randrange(0,50)
+    random_number_2 = random.randrange(0,50)
+    # Addition
+    if random_operation == 0:
+        # Store the answer for the question later
+        answer = random_number_1 + random_number_2 
+        question = f'{random_number_1} + {random_number_2} = ?'
+
+    return answer, question
+
+current_question_answer, current_question = random_question_generator()
+print(current_question_answer, current_question)
+
+
 # Instances
 
 # Main loop
