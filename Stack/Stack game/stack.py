@@ -1,3 +1,21 @@
+# Import modules
+import pygame
+
+# Initialise pygame
+pygame.init()
+
+# Screen
+screen_width = 1000
+screen_height = 800
+screen = pygame.display.set_mode((screen_width, screen_height))
+
+# Colours
+RED = (255,0,0)
+GREEN = (0,255,0)
+BLUE = (0,0,255)
+WHITE = (255,255,255)
+BLACK = (0,0,0)
+
 class Stack():
     def __init__(self, items_list = [] ):
         self.item_count = len(items_list)
@@ -37,3 +55,19 @@ class Stack():
     
     def size(self):
         print(f'There are {len(self.items_list)} items in the stack')
+
+
+    def update_stack(self):
+        pass
+
+    def draw(self):
+        rect_width = 200
+        rect_height = 75
+
+        for i in range(0, 6):
+            if self.items_list[i] == 0:
+                stack_item_colour = WHITE
+            else:
+                stack_item_colour = GREEN
+
+            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)

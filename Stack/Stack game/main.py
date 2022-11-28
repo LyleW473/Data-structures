@@ -1,5 +1,5 @@
 # Import modules
-import pygame, sys
+import pygame, sys, random
 from pygame.locals import *
 from Menus import Menu
 from stack import Stack
@@ -24,7 +24,8 @@ BLACK = (0,0,0)
 time_font = pygame.font.SysFont("Bahnschrift", 150)
 
 # Game variables
-time_counter = 5000
+time_counter = 5000 # 5 seconds in milliseconds
+spawn_stack = True # Determines whether we create a new stack instance or not
 
 # Instances
 menu = Menu(0,0,screen)
@@ -40,12 +41,29 @@ def draw_alpha_text(text, font, text_colour,  x, y):
     alpha_text.set_alpha(70)
     screen.blit(alpha_text,(x,y))
 
+def random_stack_list_generator():
+    stack_list = []
+    # Generate a random index, which will represent the index for the element where the player must reach before the time is up.
+    random_index = random.randrange(0,5)
+
+    # Create a stack list with 6 elements
+    for i in range(0, 6):
+        # If the current index is not equal to the random index we generated earlier, set the item value as 0
+        if i != random_index:
+            item_value = 0
+        # Otherwise, set the item value as 1.
+        else:
+            item_value = 1
+        # Append the items to the list used in the stack
+        stack_list.append(item_value)
+
+    return stack_list
+
+# Instances
 
 # Main loop
 run = True
 while run:
-
-    
 
     # Menu browsing and updating
     if menu.in_game == False:
@@ -81,11 +99,17 @@ while run:
             if time_counter <= 0:
                 time_counter = 5000
 
+        # Check if we need to spawn a stack.
+        if spawn_stack == True:
+            # Generate a random list for the stack
+            random_stack_list = random_stack_list_generator()
+            # Create a new stack instance, feeding in the stack list as a parameter
+            stack = Stack(random_stack_list)
+            # We no longer need to spawn a stack so reset this variable
+            spawn_stack = False
 
-        
-    
-
-    
+        # Draw the stack
+        stack.draw()
 
     
     for event in pygame.event.get():

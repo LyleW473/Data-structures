@@ -78,7 +78,6 @@ class Menu():
             # PLAY BUTTON
             # If the mouse is over the play button and is the mouse button is clicked
             if play_button.update(pos) == True and self.clicked == True: 
-                print("play button clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
                 # Set the time that the player entered the game to be now
@@ -91,7 +90,6 @@ class Menu():
 
             # CONTROLS BUTTON
             if controls_button.update(pos) == True and self.clicked == True: 
-                print("controls button clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
@@ -105,14 +103,12 @@ class Menu():
             # QUIT BUTTON
             # If the mouse is over the quit button and is the mouse button is clicked
             if quit_button.update(pos) == True and self.clicked == True:
-                print("quit button clicked")
                 # Quit the game
                 pygame.quit()
                 sys.exit()
 
             # If none of the buttons above are True, that means the player clicked on empty space
             elif play_button.update(pos) == False and quit_button.update(pos) == False and self.clicked == True: 
-                print("empty space clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
@@ -123,7 +119,6 @@ class Menu():
 
             # BACK BUTTON
             if back_button.update(pos) == True and self.clicked == True:
-                print("back button clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
@@ -139,7 +134,6 @@ class Menu():
 
             # If none of the buttons above are True, that means the player clicked on empty space
             elif back_button.update(pos) == False and self.clicked == True: 
-                print("empty space clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
@@ -167,7 +161,6 @@ class Menu():
 
             # CONTROLS BUTTON
             if controls_button_2.update(pos) == True and self.clicked == True: 
-                print("controls button clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
@@ -181,14 +174,12 @@ class Menu():
             # QUIT BUTTON
             # If the mouse is over the quit button and is the mouse button is clicked
             if quit_button_2.update(pos) == True and self.clicked == True:
-                print("quit button clicked")
                 # Quit the game
                 pygame.quit()
                 sys.exit()
 
             # If none of the buttons above are True, that means the player clicked on empty space
             elif continue_button.update(pos) == False and controls_button_2.update(pos) == False and quit_button_2.update(pos) == False and self.clicked == True:
-                print("empty space clicked")
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False             
       
