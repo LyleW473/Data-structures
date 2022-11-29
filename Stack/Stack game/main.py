@@ -98,6 +98,23 @@ def random_question_generator():
 
     return answer, question
 
+def reset_game(time_counter, stack, current_question_answer, current_question, user_text):
+    # Reset the timer
+    time_counter = 10000
+    # Delete the current stack instance
+    del stack
+    # Generate a new starting stack instance
+    random_stack_list = random_stack_list_generator()
+    stack = Stack(random_stack_list)
+
+    # Generate a new starting question
+    current_question_answer, current_question = random_question_generator()
+    # Reset the user input text
+    user_text = ""
+
+    return time_counter, stack, current_question_answer, current_question, user_text
+
+
 
 # variables (move up later)
 user_text = "" # Holds the numbers that the user types into the input box 
@@ -128,7 +145,15 @@ while run:
 
         # Only if we are in the paused menu, should we draw a "faded" timer
         if menu.show_paused_menu == True:
-            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 360, 0)
+            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 360, 0)   
+
+        # Check if the player has requested to restart the game
+        if menu.reset_game == True:
+            # Reset all of the game variables
+            time_counter, stack, current_question_answer, current_question, user_text = reset_game(time_counter, stack, current_question_answer, current_question, user_text)
+            # Now that the game has been reset, set this variable back to False
+            menu.reset_game = False
+
 
 
     # INGAME

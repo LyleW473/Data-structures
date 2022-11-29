@@ -63,6 +63,7 @@ class Menu():
         self.in_game = False # Determines whether we are in game or not
         self.show_paused_menu = False # Determines whether we show the paused menu or not
         self.show_restart_menu = False # Determines whether we show the restart menu or not
+        self.reset_game = False # Determines whether we should call the reset_game function inside the main file
 
         self.last_menu_visited = 0 # 1 = Main menu, 2 = Paused menu
 
@@ -195,6 +196,8 @@ class Menu():
                 self.show_main_menu = True
                 # Stop showing the restart menu
                 self.show_restart_menu = False
+                # Call the reset game function
+                self.reset_game = True
                 # Set the last menu visited to be the main menu (so that if the player enters the controls menu, they'll be back in the main menu)
                 self.last_menu_visited = 1
 
