@@ -59,9 +59,10 @@ class Menu():
 
         # Game states
         self.show_main_menu = True # Determines whether we show the main menu or not
-        self.show_controls_menu = False
+        self.show_controls_menu = False # Determines whether we show the controls menu or not
         self.in_game = False # Determines whether we are in game or not
-        self.show_paused_menu = False
+        self.show_paused_menu = False # Determines whether we show the paused menu or not
+        self.show_restart_menu = False # Determines whether we show the restart menu or not
 
         self.last_menu_visited = 0 # 1 = Main menu, 2 = Paused menu
 
@@ -183,6 +184,31 @@ class Menu():
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False             
       
+        if self.show_restart_menu == True:
+            screen.fill("purple")
+
+            # RETURN TO MAIN MENU BUTTON
+            if return_to_main_menu_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False
+                # Go back to the main menu  
+                self.show_main_menu = True
+                # Stop showing the restart menu
+                self.show_restart_menu = False
+                # Set the last menu visited to be the main menu (so that if the player enters the controls menu, they'll be back in the main menu)
+                self.last_menu_visited = 1
+
+            # QUIT BUTTON
+            # If the mouse is over the quit button and is the mouse button is clicked
+            if quit_button_3.update(pos) == True and self.clicked == True:
+                # Quit the game
+                pygame.quit()
+                sys.exit()
+
+            # If none of the buttons above are True, that means the player clicked on empty space
+            elif return_to_main_menu_button.update(pos) == False and quit_button_3.update(pos) == False and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False
 
 
 
@@ -195,10 +221,13 @@ quit_button = Button(300, 600, quit_image)
 
 # Controls menu
 back_button = Button(300, 600, back_image)
-return_to_main_menu_button = Button(300, 400, return_to_main_menu_image)
 
 
 # Paused menu
 continue_button = Button(300, 200, continue_image)
 controls_button_2 = Button(300, 400, controls_image)
 quit_button_2 = Button(300, 600, quit_image)
+
+# Restart menu
+return_to_main_menu_button = Button(300, 400, return_to_main_menu_image)
+quit_button_3 = Button(300, 600, quit_image)

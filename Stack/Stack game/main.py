@@ -29,6 +29,22 @@ question_font = pygame.font.SysFont("Bahnschrift", 50)
 time_counter = 10000 # 10 seconds in milliseconds
 
 
+""" Determines whether we should end the game or not: Have this as False, until the player reaches the goal node then set it to True.
+If time < 0 is False, set menu.in_game to False and open the restart menu
+
+if timer_count < 0:
+    menu.in_game = False
+        
+
+If stack.update_stack_list = True:
+    timer_count = 0
+    
+
+If the player reaches the goal element, reset the timer
+
+"""
+
+
 def draw_text(text, font, text_colour, x, y):
     image = font.render(text, True, text_colour)
     screen.blit(image, (x, y))
@@ -88,7 +104,6 @@ user_text = "" # Holds the numbers that the user types into the input box
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 70, 200, 50) # User input box rectangle
 
 # Instances
-
 menu = Menu(0,0,screen)
 
 # Starting stack:
@@ -124,7 +139,6 @@ while run:
         # Draw the timer at the top of the screen
         draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 410, 0)
         
-
         # Constantly check the time
         if pygame.time.get_ticks() - menu.entered_game_time > 1:
             # The time should be (the time counter + any time that the player spent in the menu) - (the amount of time that its been since the last check)
@@ -136,9 +150,12 @@ while run:
             # Set the current time to now so that we can keep checking the time
             menu.entered_game_time = pygame.time.get_ticks()
             
-            # If the time counter has gone below 0, reset it again
+            # If the time counter has gone below 0
             if time_counter <= 0:
-                time_counter = 10000
+                # The player has lost, so go out of the game and into the restart menu
+                menu.in_game = False
+                # Show the restart menu
+                menu.show_restart_menu = True
 
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # STACK GAMEPLAY
@@ -148,6 +165,9 @@ while run:
             # Update the stack list (with a new player position and new goal element)
             new_stack_list = random_stack_list_generator()
             stack.update_stack(new_stack_list)
+
+            # Reset the timer
+            time_counter = 10000
 
             # We no longer need to spawn a stack so reset this variable
             stack.update_stack_list = False
