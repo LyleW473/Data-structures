@@ -19,6 +19,7 @@ GREEN = (0,255,0)
 BLUE = (0,0,255)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
+GREY = (79, 79, 79)
 
 # Font
 time_font = pygame.font.SysFont("Bahnschrift", 100)
@@ -27,7 +28,7 @@ question_font = pygame.font.SysFont("Bahnschrift", 50)
 score_font = pygame.font.SysFont("Bahnschrift", 30)
 
 # Game variables
-time_counter = 12000 # 12 seconds in milliseconds
+time_counter = 30000 # 30 seconds in milliseconds
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
@@ -151,7 +152,7 @@ def random_question_generator():
     
 def reset_game(time_counter, player_score, stack, current_question_answer, current_question, user_text):
     # Reset the timer
-    time_counter = 12000
+    time_counter = 30000
 
     # Reset the player score 
     player_score = 0
@@ -195,7 +196,7 @@ while run:
 
         # Only if we are in the paused menu, should we draw a "faded" timer
         if menu.show_paused_menu == True:
-            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 360, 0)   
+            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)   
 
         # Check if the player has requested to restart the game
         if menu.reset_game == True:
@@ -204,16 +205,14 @@ while run:
             # Now that the game has been reset, set this variable back to False
             menu.reset_game = False
 
-
-
     # INGAME
     if menu.in_game == True:
-        screen.fill(BLUE)   
+        screen.fill(GREY)   
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # TIME
         # Draw the timer at the top of the screen
-        draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 410, 0)
-        
+        draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)
+
         # Constantly check the time
         if pygame.time.get_ticks() - menu.entered_game_time > 1:
             # The time should be (the time counter + any time that the player spent in the menu) - (the amount of time that its been since the last check)
@@ -231,6 +230,7 @@ while run:
                 menu.in_game = False
                 # Show the restart menu
                 menu.show_restart_menu = True
+
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # SCORE
         # If the player's current score is greater than the high score
@@ -254,23 +254,12 @@ while run:
         # Check if we need to update the stack (The player has reached the goal node)
         if stack.update_stack_list == True:
             
+            # Increment the score
+            player_score += 1
+
             # Update the stack list (with a new player position and new goal element)
             new_stack_list = random_stack_list_generator()
             stack.update_stack(new_stack_list)  
-
-            # Increment the score based on how quick the player answered the question
-            # If less than 3 seconds have passed
-            if time_counter >= 9000:
-                player_score += 3
-            # If less than 7 seconds have passed
-            elif time_counter >= 5000:
-                player_score += 2
-            # If the time is over 0 and the other statements are not true
-            elif time_counter > 0:
-                player_score += 1
-
-            # Reset the timer
-            time_counter = 12000  
 
             # We no longer need to spawn a stack so reset this variable
             stack.update_stack_list = False
@@ -279,14 +268,24 @@ while run:
         stack.draw()
 
         # Draw the current question at the top of the screen
-        draw_text(current_question, question_font, RED, 390, 120)
+        draw_text(current_question, question_font, WHITE, 390, 120)
 
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # USER INPUT
-        text_image = user_input_font.render(user_text, True, RED)
-        pygame.draw.rect(screen, WHITE, user_input_rectangle, 5)
-        screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 8))
-        user_input_rectangle.width = max(200, text_image.get_width() + 10)
+        text_image = user_input_font.render(user_text, True, BLACK)
+        pygame.draw.rect(screen, WHITE, user_input_rectangle, 0)
+        pygame.draw.rect(screen, BLACK, user_input_rectangle, 5)
+        screen.blit(text_image, (user_input_rectangle.x + 10, user_input_rectangle.y + 8))
+        user_input_rectangle.width = max(200, text_image.get_width() + 20)
+
+        # Note: This has been moved out of the event handler so that players can delete their input without pressing the backspace multiple times
+        key = pygame.key.get_pressed()
+        # If the backspace key is pressed and the user text is not empty
+        if key[K_BACKSPACE] and len(user_text) > 0:
+            # Wait some time (Otherwise it will seem like the text is being deleted instantly)
+            pygame.time.delay(50)
+            # Remove the last item inside the text
+            user_text = user_text[:-1]
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -313,13 +312,8 @@ while run:
                 # --------------------------------------------------------------------------------------------------
                 # QUESTION INPUT
 
-                # If the backspace key is pressed
-                if event.key == K_BACKSPACE:
-                    # Remove the last item inside the text
-                    user_text = user_text[:-1]
-
                 # If the player wants to push an item onto the stack
-                elif event.key == K_u and len(user_text) > 0:
+                if event.key == K_u and len(user_text) > 0:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")

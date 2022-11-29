@@ -97,7 +97,10 @@ class Stack():
         # Width and height for the stack element rectangles
         rect_width = 200
         rect_height = 75
-        
+
+        # Border
+        pygame.draw.rect(screen, BLACK, (500 - (rect_width / 2) - 5, 200 - 5, rect_width + 10, rect_height * len(self.items_list) + (len(self.items_list) * 5) + 5), 0)   
+
         # Generate rectangles (one for each stack element)
         for i in range(0, len(self.items_list)):
             # Any other stack item 
@@ -111,4 +114,16 @@ class Stack():
                 stack_item_colour = 'purple'
 
             # Draw the rectangle
-            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)
+            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)   
+
+            # Drawing eyes and a mouth on the player
+            if self.items_list[i] == 2:
+                # Left eye
+                pygame.draw.circle(screen, WHITE, (450, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 25, 50)
+                pygame.draw.circle(screen, BLACK, (450, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 12, 50)
+                # Right eye
+                pygame.draw.circle(screen, WHITE, (550, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 25, 50)
+                pygame.draw.circle(screen, BLACK, (550, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 12, 50)
+                # Mouth
+                pygame.draw.line(screen, BLACK, (480, 225 + (i * (rect_height + 5)) + (rect_height / 2)) , (520, 225 + (i * (rect_height + 5)) + (rect_height / 2)), 3)
+        
