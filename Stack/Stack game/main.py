@@ -1,5 +1,5 @@
 # Import modules
-import pygame, sys, random
+import pygame, sys, random, os
 from pygame.locals import *
 from Menus import Menu
 from stack import Stack
@@ -24,14 +24,29 @@ BLACK = (0,0,0)
 time_font = pygame.font.SysFont("Bahnschrift", 100)
 user_input_font = pygame.font.SysFont("Bahnschrift", 40)
 question_font = pygame.font.SysFont("Bahnschrift", 50)
+score_font = pygame.font.SysFont("Bahnschrift", 30)
 
 # Game variables
 time_counter = 12000 # 12 seconds in milliseconds
+user_text = "" # Holds the numbers that the user types into the input box 
+user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
+player_score = 0 # The score the player currently has
+
+# Check if a text file called "high_score" exists
+if os.path.exists('high_score.txt'):
+    # Read the contents of the file:
+    with open('high_score.txt', 'r') as high_score_file:
+        # Set the high score to be the value inside that file
+        high_score = int(high_score_file.read())
+# If it doesn't exist
+else:
+    # Set the high score as 0
+    high_score = 0
+
 
 def draw_text(text, font, text_colour, x, y):
     image = font.render(text, True, text_colour)
     screen.blit(image, (x, y))
-
 
 def draw_alpha_text(text, font, text_colour,  x, y):
     alpha_text = font.render(text, True ,text_colour)
@@ -134,10 +149,13 @@ def random_question_generator():
 
     return answer, question
     
-
-def reset_game(time_counter, stack, current_question_answer, current_question, user_text):
+def reset_game(time_counter, player_score, stack, current_question_answer, current_question, user_text):
     # Reset the timer
     time_counter = 12000
+
+    # Reset the player score 
+    player_score = 0
+
     # Delete the current stack instance
     del stack
     # Generate a new starting stack instance
@@ -149,13 +167,8 @@ def reset_game(time_counter, stack, current_question_answer, current_question, u
     # Reset the user input text
     user_text = ""
 
-    return time_counter, stack, current_question_answer, current_question, user_text
+    return time_counter, player_score, stack, current_question_answer, current_question, user_text
 
-
-
-# variables (move up later)
-user_text = "" # Holds the numbers that the user types into the input box 
-user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 70, 200, 50) # User input box rectangle
 
 # Instances
 menu = Menu(0,0,screen)
@@ -187,7 +200,7 @@ while run:
         # Check if the player has requested to restart the game
         if menu.reset_game == True:
             # Reset all of the game variables
-            time_counter, stack, current_question_answer, current_question, user_text = reset_game(time_counter, stack, current_question_answer, current_question, user_text)
+            time_counter, player_score, stack, current_question_answer, current_question, user_text = reset_game(time_counter, player_score, stack, current_question_answer, current_question, user_text)
             # Now that the game has been reset, set this variable back to False
             menu.reset_game = False
 
@@ -218,7 +231,24 @@ while run:
                 menu.in_game = False
                 # Show the restart menu
                 menu.show_restart_menu = True
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # SCORE
+        # If the player's current score is greater than the high score
+        if player_score > high_score:
+            # Set the high score as the player's current score
+            high_score = player_score
+            # Write the score into a new file 
+            with open("high_score.txt", "w") as high_score_file:
+                high_score_file.write(str(high_score))
 
+        # Drawing the high score onto the screen
+        draw_text("High score:", score_font, WHITE, 50, 660)
+        draw_text(str(high_score), score_font, WHITE, 205, 661)
+
+        # Drawing the score onto the screen
+        draw_text("Score:", score_font, WHITE, 50, 710)
+        draw_text(str(player_score), score_font, WHITE, 140, 711)
+        
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # STACK GAMEPLAY
         # Check if we need to update the stack (The player has reached the goal node)
@@ -226,10 +256,21 @@ while run:
             
             # Update the stack list (with a new player position and new goal element)
             new_stack_list = random_stack_list_generator()
-            stack.update_stack(new_stack_list)
+            stack.update_stack(new_stack_list)  
+
+            # Increment the score based on how quick the player answered the question
+            # If less than 3 seconds have passed
+            if time_counter >= 9000:
+                player_score += 3
+            # If less than 7 seconds have passed
+            elif time_counter >= 5000:
+                player_score += 2
+            # If the time is over 0 and the other statements are not true
+            elif time_counter > 0:
+                player_score += 1
 
             # Reset the timer
-            time_counter = 12000
+            time_counter = 12000  
 
             # We no longer need to spawn a stack so reset this variable
             stack.update_stack_list = False
@@ -244,7 +285,7 @@ while run:
         # USER INPUT
         text_image = user_input_font.render(user_text, True, RED)
         pygame.draw.rect(screen, WHITE, user_input_rectangle, 5)
-        screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 10))
+        screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 8))
         user_input_rectangle.width = max(200, text_image.get_width() + 10)
 
     for event in pygame.event.get():
@@ -288,12 +329,11 @@ while run:
                         # Generate a new question
                         current_question_answer, current_question = random_question_generator()
 
-                        # Reset the user text
-                        user_text = ""
-
                     else:
                         print("Incorrect")
                         
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player wants to pop an item off the stack
                 elif event.key == K_j and len(user_text) > 0:
@@ -312,6 +352,9 @@ while run:
 
                     else:
                         print("Incorrect")
+                        
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player has pressed any other key
                 else:   

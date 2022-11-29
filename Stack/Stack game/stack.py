@@ -84,7 +84,6 @@ class Stack():
 
 
     def update_stack(self, stack_list):
-        print("here")
         # Set the items list to be the new randomised stack list passed into the method.
         self.items_list = stack_list
 
