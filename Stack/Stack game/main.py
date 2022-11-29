@@ -26,24 +26,7 @@ user_input_font = pygame.font.SysFont("Bahnschrift", 40)
 question_font = pygame.font.SysFont("Bahnschrift", 50)
 
 # Game variables
-time_counter = 10000 # 10 seconds in milliseconds
-
-
-""" Determines whether we should end the game or not: Have this as False, until the player reaches the goal node then set it to True.
-If time < 0 is False, set menu.in_game to False and open the restart menu
-
-if timer_count < 0:
-    menu.in_game = False
-        
-
-If stack.update_stack_list = True:
-    timer_count = 0
-    
-
-If the player reaches the goal element, reset the timer
-
-"""
-
+time_counter = 12000 # 12 seconds in milliseconds
 
 def draw_text(text, font, text_colour, x, y):
     image = font.render(text, True, text_colour)
@@ -85,22 +68,76 @@ def random_stack_list_generator():
     return stack_list
 
 def random_question_generator():
-    # random_operation = random.randrange(0,3) # Add = 0, Subtract = 1, Multiply = 2, Division = 3 , could add MOD
-    random_operation = 0
-    # Note: Maybe define these random numbers in the random operation sections. That way we can have harder addition questions but easier multiplication questions.
-    random_number_1 = random.randrange(0,1)
-    random_number_2 = random.randrange(0,1)
+
+    # Choose a random operation for the question to have
+    random_operation = random.randrange(0,4) # 0 = Addition, 1 = Subtraction, 2 = Multiplication, 3 = Division, 4 = MOD
+
     # Addition
     if random_operation == 0:
+        # Generate random numbers
+        random_number_1 = random.randrange(0,20)
+        random_number_2 = random.randrange(0,20)
+
         # Store the answer for the question later
         answer = random_number_1 + random_number_2 
         question = f'{random_number_1} + {random_number_2} = ?'
 
+    # Subtraction
+    if random_operation == 1:
+        # Generate random numbers
+        random_number_1 = random.randrange(0,20)
+        random_number_2 = random.randrange(0,20)
+
+        # Store the answer for the question later
+        answer = random_number_1 - random_number_2 
+        question = f'{random_number_1} - {random_number_2} = ?'   
+
+    # Multiplication
+    if random_operation == 2:
+        # Generate random numbers
+        random_number_1 = random.randrange(1,12)
+        random_number_2 = random.randrange(0,12)
+        
+        # Store the answer for the question later
+        answer = random_number_1 * random_number_2 
+        question = f'{random_number_1} x {random_number_2} = ?'   
+
+    # Division
+    if random_operation == 3:
+        # Generate random numbers
+        random_number_1 = random.randrange(1,50)
+        random_number_2 = random.randrange(1,10)
+
+        # In the case that the the first number is not divisible by the second number
+        while random_number_1 % random_number_2 != 0:
+            # Generate different random numbers
+            random_number_1 = random.randrange(1,50)
+            random_number_2 = random.randrange(1,10)
+
+        # Store the answer for the question later
+        answer = int(random_number_1 / random_number_2)
+        question = f'{random_number_1} divided by {random_number_2} = ?'   
+
+    # MOD
+    if random_operation == 4:
+        random_number_1 = random.randrange(1,50)
+        random_number_2 = random.randrange(1,5)
+        # In the case that the first number is lower than the second number
+        while random_number_1 < random_number_2:
+            # Generate different random numbers
+            random_number_1 = random.randrange(1,50)
+            random_number_2 = random.randrange(1,5)
+
+        # Store the answer for the question later
+        answer = random_number_1 % random_number_2 
+        question = f'{random_number_1} MOD {random_number_2} = ?'   
+
     return answer, question
+    
 
 def reset_game(time_counter, stack, current_question_answer, current_question, user_text):
     # Reset the timer
-    time_counter = 10000
+    time_counter = 12000
     # Delete the current stack instance
     del stack
     # Generate a new starting stack instance
@@ -192,7 +229,7 @@ while run:
             stack.update_stack(new_stack_list)
 
             # Reset the timer
-            time_counter = 10000
+            time_counter = 12000
 
             # We no longer need to spawn a stack so reset this variable
             stack.update_stack_list = False
@@ -201,7 +238,7 @@ while run:
         stack.draw()
 
         # Draw the current question at the top of the screen
-        draw_text(current_question, question_font, RED, 400, 120)
+        draw_text(current_question, question_font, RED, 390, 120)
 
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # USER INPUT
@@ -241,7 +278,7 @@ while run:
                     user_text = user_text[:-1]
 
                 # If the player wants to push an item onto the stack
-                elif event.key == K_j and len(user_text) > 0:
+                elif event.key == K_u and len(user_text) > 0:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
@@ -259,7 +296,7 @@ while run:
                         
 
                 # If the player wants to pop an item off the stack
-                elif event.key == K_k and len(user_text) > 0:
+                elif event.key == K_j and len(user_text) > 0:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
@@ -278,8 +315,8 @@ while run:
 
                 # If the player has pressed any other key
                 else:   
-                    # Check the unicode number of the key and if it is a number from 0 to 9
-                    if 48 <= event.key <= 57:
+                    # Check the unicode number of the key. If it is a number from 0 to 9 or is the "-" symbol
+                    if 48 <= event.key <= 57 or event.key == 45:
                         # Check that the player hasn't written more than 20 digits
                         if len(user_text) <= 20:
                             # Contacenate the key the user pressed to the user text
