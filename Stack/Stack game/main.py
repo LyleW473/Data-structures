@@ -28,10 +28,11 @@ question_font = pygame.font.SysFont("Bahnschrift", 50)
 score_font = pygame.font.SysFont("Bahnschrift", 30)
 
 # Game variables
-time_counter = 30000 # 30 seconds in milliseconds
+time_counter = 5000 # 30 seconds in milliseconds
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
+
 
 # Check if a text file called "high_score" exists
 if os.path.exists('high_score.txt'):
@@ -83,7 +84,7 @@ def random_stack_list_generator():
 
     return stack_list
 
-def random_question_generator():
+def random_maths_question_generator():
 
     # Choose a random operation for the question to have
     random_operation = random.randrange(0,4) # 0 = Addition, 1 = Subtraction, 2 = Multiplication, 3 = Division, 4 = MOD
@@ -150,6 +151,11 @@ def random_question_generator():
 
     return answer, question
     
+
+def random_spelling_question_generator():
+    pass
+
+
 def reset_game(time_counter, player_score, stack, current_question_answer, current_question, user_text):
     # Reset the timer
     time_counter = 30000
@@ -164,7 +170,7 @@ def reset_game(time_counter, player_score, stack, current_question_answer, curre
     stack = Stack(random_stack_list)
 
     # Generate a new starting question
-    current_question_answer, current_question = random_question_generator()
+    current_question_answer, current_question = random_maths_question_generator()
     # Reset the user input text
     user_text = ""
 
@@ -180,7 +186,7 @@ random_stack_list = random_stack_list_generator()
 # Create a new stack instance, feeding in the stack list as a parameter
 stack = Stack(random_stack_list)
 # Create the starting question 
-current_question_answer, current_question = random_question_generator()
+current_question_answer, current_question = random_maths_question_generator()
 
 
 # Main loop
@@ -321,7 +327,7 @@ while run:
                         stack.travel_up()
 
                         # Generate a new question
-                        current_question_answer, current_question = random_question_generator()
+                        current_question_answer, current_question = random_maths_question_generator()
 
                     else:
                         print("Incorrect")
@@ -339,7 +345,7 @@ while run:
                         stack.travel_down()
 
                         # Generate a new question
-                        current_question_answer, current_question = random_question_generator()
+                        current_question_answer, current_question = random_maths_question_generator()
 
                         # Reset the user text
                         user_text = ""

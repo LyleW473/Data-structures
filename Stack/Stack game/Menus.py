@@ -18,6 +18,8 @@ back_image = pygame.image.load('graphics/Buttons/back_button.png').convert()
 return_to_main_menu_image = pygame.image.load('graphics/Buttons/return_to_main_menu_button.png').convert()
 continue_image = pygame.image.load('graphics/Buttons/continue_button.png').convert()
 
+maths_image = pygame.image.load('graphics/Buttons/maths_button.png').convert()
+spelling_image = pygame.image.load('graphics/Buttons/spelling_button.png').convert()
 
 # Colours
 RED = (255,0,0)
@@ -25,7 +27,7 @@ GREEN = (0,255,0)
 BLUE = (0,0,255)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
-
+GREY = (79, 79, 79)
 
 
 class Button():
@@ -47,8 +49,6 @@ class Button():
         # Return the clicked variable to the menu
         return mouse_over_button
 
-
-
 class Menu():
     def __init__(self, x, y, surface):
         # Surface that the menu will be drawn onto
@@ -64,8 +64,12 @@ class Menu():
         self.show_paused_menu = False # Determines whether we show the paused menu or not
         self.show_restart_menu = False # Determines whether we show the restart menu or not
         self.reset_game = False # Determines whether we should call the reset_game function inside the main file
-
         self.last_menu_visited = 0 # 1 = Main menu, 2 = Paused menu
+
+        self.show_choose_mode_menu = False # Determines whether we should show the menu where the player can choose what mode they want to play
+        # Game modes:
+        self.spelling_mode = False
+        self.maths_mode = False
 
         # Time tracking
         self.menu_times_dictionary = {"in_menu_time": 0, "entered_menu_time": 0}
@@ -82,13 +86,16 @@ class Menu():
             if play_button.update(pos) == True and self.clicked == True: 
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
-                # Set the time that the player entered the game to be now
-                self.entered_game_time = pygame.time.get_ticks()
-                # Set the game already started variable to True
-                self.game_already_started = True
-                # Set the main menu to stop showing and start the game
+                # # Set the time that the player entered the game to be now
+                # self.entered_game_time = pygame.time.get_ticks()
+                # # Set the main menu to stop showing and start the game
+                # self.show_main_menu = False
+                # self.in_game = True
+
+                # Display the mode chooser menu
                 self.show_main_menu = False
-                self.in_game = True
+                self.show_choose_mode_menu = True
+
 
             # CONTROLS BUTTON
             if controls_button.update(pos) == True and self.clicked == True: 
@@ -114,7 +121,7 @@ class Menu():
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
-            
+
         # CONTROLS MENU
         if self.show_controls_menu == True:
             screen.fill(GREEN)
@@ -138,7 +145,6 @@ class Menu():
             elif back_button.update(pos) == False and self.clicked == True: 
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
-
 
         # PAUSED MENU
         if self.show_paused_menu == True:
@@ -184,7 +190,8 @@ class Menu():
             elif continue_button.update(pos) == False and controls_button_2.update(pos) == False and quit_button_2.update(pos) == False and self.clicked == True:
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False             
-      
+
+        # RESTART MENU
         if self.show_restart_menu == True:
             screen.fill("purple")
 
@@ -213,7 +220,55 @@ class Menu():
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
 
+        # CHOOSE MODE MENU
+        if self.show_choose_mode_menu == True:
 
+            # Fill the screen with a white background
+            screen.fill(GREY)  
+            # Borders for the maths and spelling buttons
+            pygame.draw.rect(screen, BLACK, (195, 195, 260, 260), 5)
+            pygame.draw.rect(screen, BLACK, (545, 195, 260, 260), 5)
+
+            # If the maths mode was clicked
+            if maths_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+
+                # Set the mode to be the maths mode
+                self.maths_mode = True
+                # Set the time that the player entered the game to be now
+                self.entered_game_time = pygame.time.get_ticks()
+                # Set the mode menu to stop showing and start the game
+                self.show_choose_mode_menu = False
+                self.in_game = True
+            
+            # If the spelling mode was clicked
+            if spelling_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+
+                # Set the mode to be the spelling mode
+                self.spelling_mode = True
+
+                # Set the time that the player entered the game to be now
+                self.entered_game_time = pygame.time.get_ticks()
+                # Set the mode menu to stop showing and start the game
+                self.show_choose_mode_menu = False
+                self.in_game = True
+
+            # If the back button was clicked
+            if back_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+
+                # Go back to the main menu
+                self.show_main_menu = True
+                self.show_choose_mode_menu = False
+            
+            # If none of these buttons were clicked, then the player clicked on empty space
+            elif maths_button.update(pos) == False and spelling_button.update(pos) == False and back_button.update(pos) == False and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
 
 # Button instances
 
@@ -225,7 +280,6 @@ quit_button = Button(300, 600, quit_image)
 # Controls menu
 back_button = Button(300, 600, back_image)
 
-
 # Paused menu
 continue_button = Button(300, 200, continue_image)
 controls_button_2 = Button(300, 400, controls_image)
@@ -234,3 +288,8 @@ quit_button_2 = Button(300, 600, quit_image)
 # Restart menu
 return_to_main_menu_button = Button(300, 400, return_to_main_menu_image)
 quit_button_3 = Button(300, 600, quit_image)
+
+# Choose mode menu
+maths_button = Button(200, 200, maths_image)
+spelling_button = Button(800 - 250, 200, spelling_image)
+back_button_2 = Button(300, 600, back_image)
