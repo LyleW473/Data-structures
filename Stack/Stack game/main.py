@@ -1,38 +1,19 @@
 # Import modules
 import pygame, sys, random, os
 from pygame.locals import *
-from Menus import Menu
-from stack import Stack
+#from Menus import Menu
+#from stack import Stack
 from functions import *
 
 # Initialise pygame
 pygame.init()
-
-# Screen
-screen_width = 1000
-screen_height = 800
-screen = pygame.display.set_mode((screen_width, screen_height))
-
-# Colours
-RED = (255,0,0)
-GREEN = (0,255,0)
-BLUE = (0,0,255)
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-GREY = (79, 79, 79)
-
-# Font
-time_font = pygame.font.SysFont("Bahnschrift", 100)
-user_input_font = pygame.font.SysFont("Bahnschrift", 40)
-question_font = pygame.font.SysFont("Bahnschrift", 50)
-score_font = pygame.font.SysFont("Bahnschrift", 30)
 
 # Game variables
 time_counter = 5000 # 30 seconds in milliseconds
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
-
+starting_setup = True
 
 # Check if a text file called "high_score" exists
 if os.path.exists('high_score.txt'):
@@ -44,18 +25,6 @@ if os.path.exists('high_score.txt'):
 else:
     # Set the high score as 0
     high_score = 0
-
-# Instances
-menu = Menu(0,0,screen)
-
-# Starting stack:
-# Generate a random list for the stack
-random_stack_list = random_stack_list_generator()
-# Create a new stack instance, feeding in the stack list as a parameter
-stack = Stack(random_stack_list)
-# Create the starting question 
-current_question_answer, current_question = random_maths_question_generator()
-
 
 # Main loop
 run = True
@@ -75,9 +44,15 @@ while run:
         # Check if the player has requested to restart the game
         if menu.reset_game == True:
             # Reset all of the game variables
-            time_counter, player_score, stack, current_question_answer, current_question, user_text = reset_game(time_counter, player_score, stack, current_question_answer, current_question, user_text)
+            time_counter, player_score, stack, user_text, starting_setup = reset_game(time_counter, player_score, stack, user_text, starting_setup)
+            
+            # Reset the current modes (In case the player wants to try a different mode)
+            menu.maths_mode = False
+            menu.spelling_mode = False
+            
             # Now that the game has been reset, set this variable back to False
-            menu.reset_game = False
+            menu.reset_game = False 
+
 
     # INGAME
     if menu.in_game == True:
@@ -126,6 +101,19 @@ while run:
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # STACK GAMEPLAY
         # Check if we need to update the stack (The player has reached the goal node)
+
+        if starting_setup == True:
+            # Starting stack:
+            # Generate a random list for the stack
+            random_stack_list = random_stack_list_generator()
+            # Create a new stack instance, feeding in the stack list as a parameter
+            stack = Stack(random_stack_list)
+    
+            # Create the starting question 
+            current_question_answer, current_question = ask_question(list_of_words)
+
+            starting_setup = False
+        
         if stack.update_stack_list == True:
             
             # Increment the score
@@ -186,52 +174,98 @@ while run:
                 # --------------------------------------------------------------------------------------------------
                 # QUESTION INPUT
 
-                # If the player wants to push an item onto the stack
-                if event.key == K_u and len(user_text) > 0:
+                # If the player wants to travel up the stack
+                if event.key == K_RIGHTBRACKET and len(user_text) > 0 and user_text != "-":
                     # Check if the user input is the same as the answer
-                    if int(user_text) == current_question_answer:
-                        print("Correct")
-                        # Move the player up the stack 
-                        stack.travel_up()
 
-                        # Generate a new question
-                        current_question_answer, current_question = random_maths_question_generator()
+                    if menu.maths_mode == True:
+                        if int(user_text) == current_question_answer :
+                            print("Correct")
+                            # Move the player up the stack 
+                            stack.travel_up()
 
-                    else:
-                        print("Incorrect")
+                            # Generate a new question
+                            current_question_answer, current_question = random_maths_question_generator()
+
+                        else:
+                            print("Incorrect")
                         
-                    # Reset the user text (regardless if it was correct or incorrect)
-                    user_text = ""
-
-                # If the player wants to pop an item off the stack
-                elif event.key == K_j and len(user_text) > 0:
-                    # Check if the user input is the same as the answer
-                    if int(user_text) == current_question_answer:
-                        print("Correct")
-
-                        # Move the player down the stack
-                        stack.travel_down()
-
-                        # Generate a new question
-                        current_question_answer, current_question = random_maths_question_generator()
-
-                        # Reset the user text
+                        # Reset the user text (regardless if it was correct or incorrect)
                         user_text = ""
 
-                    else:
-                        print("Incorrect")
+                    elif menu.spelling_mode == True:
+                        # Check if the user input is the same as the answer
+                        if user_text == current_question_answer:
+                            print("Correct")
+
+                            # Move the player down the stack
+                            stack.travel_up()
+
+                            # Generate a new question
+                            current_question_answer, current_question = random_spelling_question_generator(list_of_words)
+
+                        else:
+                            print("Incorrect")
+                            
+                        # Reset the user text (regardless if it was correct or incorrect)
+                        user_text = ""
+
+                # If the player wants to travel down the stack
+                elif event.key == K_HASH and len(user_text) > 0 and user_text != "-":
+
+                    if menu.maths_mode == True:
+                        # Check if the user input is the same as the answer
+                        if int(user_text) == current_question_answer:
+                            print("Correct")
+
+                            # Move the player down the stack
+                            stack.travel_down()
+
+                            # Generate a new question
+                            current_question_answer, current_question = random_maths_question_generator()
+
+                        else:
+                            print("Incorrect")
+                            
+                        # Reset the user text (regardless if it was correct or incorrect)
+                        user_text = ""
                         
-                    # Reset the user text (regardless if it was correct or incorrect)
-                    user_text = ""
+                    elif menu.spelling_mode == True:
+                        # Check if the user input is the same as the answer
+                        if user_text == current_question_answer:
+                            print("Correct")
+
+                            # Move the player down the stack
+                            stack.travel_down()
+
+                            # Generate a new question
+                            current_question_answer, current_question = random_spelling_question_generator(list_of_words)
+
+                        else:
+                            print("Incorrect")
+                            
+                        # Reset the user text (regardless if it was correct or incorrect)
+                        user_text = ""
 
                 # If the player has pressed any other key
                 else:   
-                    # Check the unicode number of the key. If it is a number from 0 to 9 or is the "-" symbol
-                    if 48 <= event.key <= 57 or event.key == 45:
-                        # Check that the player hasn't written more than 20 digits
-                        if len(user_text) <= 20:
-                            # Contacenate the key the user pressed to the user text
-                            user_text += event.unicode
+                    # Check which mode the player is in
+                    if menu.maths_mode == True:
+                        # Check the unicode number of the key. If it is a number from 0 to 9 or is the "-" symbol
+                        if 48 <= event.key <= 57 or event.key == 45:
+                            # Check that the player hasn't written more than 20 digits
+                            if len(user_text) <= 20:
+                                # Contacenate the key the user pressed to the user text
+                                user_text += event.unicode
+                    
+                    elif menu.spelling_mode == True:
+                        # Check that the key pressed isn't a number
+                        if event.key not in [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]:
+                            # Check that the player hasn't written more than 20 digits
+                            if len(user_text) <= 20:
+                                # Contacenate the key the user pressed to the user text
+                                user_text += event.unicode
+
 
 
 
