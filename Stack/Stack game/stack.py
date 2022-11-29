@@ -20,9 +20,14 @@ class Stack():
     def __init__(self, items_list = [] ):
         self.item_count = len(items_list)
         self.items_list = items_list # If a list isn't passed into the instance when first being instantiated, by default, it will be empty.
+
+        # Find where the player is inside the items list
         for i in range(0, len(self.items_list)):
             if self.items_list[i] == 2:
+                # Set the player pointer to be the same as the index in the list
                 self.player_pointer = i
+        
+        self.update_stack_list = False # Determines whether we need to update the stack list
 
     def travel_up(self):
         # If we are traveling up the stack, we are going left in the list
@@ -44,9 +49,9 @@ class Stack():
                 self.items_list[self.player_pointer - 1] = self.items_list[self.player_pointer]
                 # Set the item that the player was just at to be nothing
                 self.items_list[self.player_pointer] = 0
+                # Generate a new stack list (So the player will spawn at a random spot again, and a new goal element will be generated)
+                self.update_stack_list = True
 
-            # --------------------------------- ADD CODE HERE FOR GENERATING A NEW GOAL ELEMENT
-              
             # Decrement the player pointer
             self.player_pointer -= 1
         
@@ -71,14 +76,22 @@ class Stack():
                 self.items_list[self.player_pointer + 1] = self.items_list[self.player_pointer]
                 # Set the item that the player was just at to be nothing
                 self.items_list[self.player_pointer] = 0
-
-                # --------------------------------- ADD CODE HERE FOR GENERATING A NEW GOAL ELEMENT
+                # Generate a new stack list (So the player will spawn at a random spot again, and a new goal element will be generated)
+                self.update_stack_list = True
 
             # Increment the player pointer
             self.player_pointer += 1
 
-    def update_stack(self):
-        pass
+
+    def update_stack(self, stack_list):
+        # Set the items list to be the new randomised stack list passed into the method.
+        self.items_list = stack_list
+
+        # Find where the player is inside the items list
+        for i in range(0, len(self.items_list)):
+            if self.items_list[i] == 2:
+                # Set the player pointer to be the same as the index in the list
+                self.player_pointer = i
 
     def draw(self):
         # Width and height for the stack element rectangles
@@ -95,7 +108,7 @@ class Stack():
                 stack_item_colour = GREEN
             # The player 
             elif self.items_list[i] == 2:
-                stack_item_colour = RED
+                stack_item_colour = 'purple'
 
             # Draw the rectangle
             pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)

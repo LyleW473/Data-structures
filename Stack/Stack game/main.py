@@ -26,11 +26,7 @@ user_input_font = pygame.font.SysFont("Bahnschrift", 40)
 question_font = pygame.font.SysFont("Bahnschrift", 50)
 
 # Game variables
-time_counter = 5000 # 5 seconds in milliseconds
-generate_new_questions = True # Determines whether we need to generate a new question or not
-
-# Instances
-menu = Menu(0,0,screen)
+time_counter = 10000 # 10 seconds in milliseconds
 
 
 def draw_text(text, font, text_colour, x, y):
@@ -48,8 +44,6 @@ def random_stack_list_generator():
     # Generate a random index, which will represent the index for the element where the player must reach before the time is up.
     random_index = random.randrange(0,5)
     player_random_index = random.randrange(0,5)
-    print("random", random_index)
-    print("player", random_index)
     
     # In the case that the player spawning index and the goal index is the same, keep generating new indexes for the player
     while player_random_index == random_index:  
@@ -78,8 +72,8 @@ def random_question_generator():
     # random_operation = random.randrange(0,3) # Add = 0, Subtract = 1, Multiply = 2, Division = 3 , could add MOD
     random_operation = 0
     # Note: Maybe define these random numbers in the random operation sections. That way we can have harder addition questions but easier multiplication questions.
-    random_number_1 = random.randrange(0,50)
-    random_number_2 = random.randrange(0,50)
+    random_number_1 = random.randrange(0,1)
+    random_number_2 = random.randrange(0,1)
     # Addition
     if random_operation == 0:
         # Store the answer for the question later
@@ -95,10 +89,16 @@ user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 70,
 
 # Instances
 
+menu = Menu(0,0,screen)
+
+# Starting stack:
 # Generate a random list for the stack
 random_stack_list = random_stack_list_generator()
 # Create a new stack instance, feeding in the stack list as a parameter
 stack = Stack(random_stack_list)
+# Create the starting question 
+current_question_answer, current_question = random_question_generator()
+
 
 # Main loop
 run = True
@@ -138,20 +138,19 @@ while run:
             
             # If the time counter has gone below 0, reset it again
             if time_counter <= 0:
-                time_counter = 5000
+                time_counter = 10000
 
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # STACK GAMEPLAY
-        # Check if we need to spawn a stack.
-        if generate_new_questions == True:
+        # Check if we need to update the stack (The player has reached the goal node)
+        if stack.update_stack_list == True:
+            
+            # Update the stack list (with a new player position and new goal element)
+            new_stack_list = random_stack_list_generator()
+            stack.update_stack(new_stack_list)
 
             # We no longer need to spawn a stack so reset this variable
-            generate_new_questions = False
-
-            # Generate a question 
-            current_question_answer, current_question = random_question_generator()
-            print(current_question_answer, current_question)
-            print(stack.items_list)
+            stack.update_stack_list = False
 
         # Draw the stack
         stack.draw()
@@ -166,8 +165,6 @@ while run:
         screen.blit(text_image, (user_input_rectangle.x + 5, user_input_rectangle.y + 10))
         user_input_rectangle.width = max(200, text_image.get_width() + 10)
 
-        
-    
     for event in pygame.event.get():
         if event.type == QUIT:
             run = False
@@ -203,8 +200,15 @@ while run:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
-                        # ---- ADD CODE TO TRAVEL UP THE STACK  
+                        # Move the player up the stack 
                         stack.travel_up()
+
+                        # Generate a new question
+                        current_question_answer, current_question = random_question_generator()
+
+                        # Reset the user text
+                        user_text = ""
+
                     else:
                         print("Incorrect")
                         
@@ -214,8 +218,15 @@ while run:
                     # Check if the user input is the same as the answer
                     if int(user_text) == current_question_answer:
                         print("Correct")
+
+                        # Move the player down the stack
                         stack.travel_down()
-                        # ---- ADD CODE TO TRAVEL DOWN THE STACK
+
+                        # Generate a new question
+                        current_question_answer, current_question = random_question_generator()
+
+                        # Reset the user text
+                        user_text = ""
 
                     else:
                         print("Incorrect")
