@@ -401,6 +401,19 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
     
     return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time
 
+def random_stack_list_generator_2():
+    # Generate a random number for the height of the stack (1 to 6)
+    initial_height = random.randrange(1, 6)
+
+    # Create a list full of zeros up until the initial height -1. This is because the final element will be the player.
+    stack_list = [0 for i in range(0, initial_height - 1)]
+
+    # Append the player to the list
+    stack_list.append(2)
+    
+    return stack_list
+
+
 
 def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time):
 
@@ -455,7 +468,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
         if starting_setup == True:
             # Starting stack:
             # Generate a random list for the stack
-            random_stack_list = random_stack_list_generator()
+            random_stack_list = random_stack_list_generator_2()
             # Create a new stack instance, feeding in the stack list as a parameter
             stack = Stack2(random_stack_list)
     
@@ -470,8 +483,8 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             # Increment the score
             player_score += 1
 
-            # Update the stack list (with a new player position and new goal element)
-            new_stack_list = random_stack_list_generator()
+            # Update the stack list (with a random initial height)
+            new_stack_list = random_stack_list_generator_2()
             stack.update_stack(new_stack_list)  
 
             # We no longer need to spawn a stack so reset this variable
@@ -545,7 +558,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                     if menu.maths_mode == True:
                         if int(user_text) == current_question_answer :
                             # Move the player up the stack 
-                            stack.travel_up()
+                            stack.push()
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
                             # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
@@ -558,7 +571,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
                             # Move the player down the stack
-                            stack.travel_up()
+                            stack.push()
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)
                             # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
@@ -579,7 +592,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                         # Check if the user input is the same as the answer
                         if int(user_text) == current_question_answer:
                             # Move the player down the stack
-                            stack.travel_down()
+                            stack.pop()
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
                             # Set the variable answered correctly to 1 (so that the "Correct" text can be displayed)
@@ -592,7 +605,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
                             # Move the player down the stack
-                            stack.travel_down()
+                            stack.pop()
 
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)

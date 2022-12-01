@@ -37,6 +37,7 @@ question_answered_time = 0
 run = True
 while run:
     
+    # Limit the FPS to 60
     clock.tick(60)
 
     # Menu browsing and updating
@@ -84,7 +85,6 @@ while run:
             # Check if the mouse button clicked was the left click
             if event.button == 1: # (1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scrolldown)
                 menu.clicked = True
-
 
 
     pygame.display.update()

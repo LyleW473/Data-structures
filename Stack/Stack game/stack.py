@@ -1,5 +1,6 @@
 # Import modules
 import pygame
+from pygame.locals import *
 
 # Initialise pygame
 pygame.init()
@@ -133,39 +134,50 @@ class Stack2(Stack):
 
 
     def pop(self):
-        pass
+    
+        # If there is greater than 1 item
+        if len(self.items_list) > 1:
+            # Pop the item underneath the player segment
+            self.items_list.pop(self.player_pointer - 1)
+            # Decrement the player pointer
+            self.player_pointer -= 1
 
     def push(self):
-        pass
+        if len(self.items_list) < 6:
+            # Push the item to the top of the stack
+            self.items_list.insert(len(self.items_list) - 1, 0)
+
+            # Increment the player pointer
+            self.player_pointer += 1
+
+        print(self.items_list)
 
     def draw(self):
         # Width and height for the stack element rectangles
         rect_width = 200
         rect_height = 75
 
-        # Border
-        pygame.draw.rect(screen, BLACK, (500 - (rect_width / 2) - 5, 200 - 5, rect_width + 10, rect_height * len(self.items_list) + (len(self.items_list) * 5) + 5), 0)   
+        
+        # Note: Border (y = 595 - ( 80 *  number of items - 1)), height = 85 + (80 * number of items - 1)  80 = rect width + top outline
+        pygame.draw.rect(screen, BLACK, (500 - (rect_width / 2) - 5, 595 - (80 * (len(self.items_list) - 1)) , rect_width + 10, 85 + (80 * (len(self.items_list) - 1)) ) , 0)
 
         # Generate rectangles (one for each stack element)
         for i in range(0, len(self.items_list)):
             # Any other stack item 
             if self.items_list[i] == 0:
                 stack_item_colour = WHITE
-            # The goal position
-            elif self.items_list[i] == 1:
-                stack_item_colour = GREEN
             # The player 
             elif self.items_list[i] == 2:
                 stack_item_colour = RED
 
             # Draw the rectangle
-            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)   
+            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 600 - (i * (rect_height + 5)), rect_width, rect_height), 0)   
 
             # Drawing eyes and a mouth on the player
             if self.items_list[i] == 2:
                 # Left eye
-                pygame.draw.circle(screen, BLACK, (460, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
+                pygame.draw.circle(screen, BLACK, (460, 600 - (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
                 # Right eye
-                pygame.draw.circle(screen, BLACK, (540, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
+                pygame.draw.circle(screen, BLACK, (540, 600 - (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
                 # Mouth
-                pygame.draw.line(screen, BLACK, (480, 220 + (i * (rect_height + 5)) + (rect_height / 2)) , (520, 220 + (i * (rect_height + 5)) + (rect_height / 2)), 5)
+                pygame.draw.line(screen, BLACK, (480, 620 - (i * (rect_height + 5)) + (rect_height / 2)) , (520, 620 - (i * (rect_height + 5)) + (rect_height / 2)), 5)
