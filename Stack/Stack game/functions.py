@@ -1,62 +1,180 @@
-# Import modules
-import pygame, sys, random, os
+import pygame, random, urllib.request, sys
 from pygame.locals import *
-#from Menus import Menu
-#from stack import Stack
-from functions import *
-
-# Initialise pygame
-pygame.init()
-
-# Game variables
-time_counter = 5000 # 30 seconds in milliseconds
-user_text = "" # Holds the numbers that the user types into the input box 
-user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
-player_score = 0 # The score the player currently has
-starting_setup = True
-
-# Check if a text file called "high_score" exists
-if os.path.exists('high_score.txt'):
-    # Read the contents of the file:
-    with open('high_score.txt', 'r') as high_score_file:
-        # Set the high score to be the value inside that file
-        high_score = int(high_score_file.read())
-# If it doesn't exist
-else:
-    # Set the high score as 0
-    high_score = 0
+from Menus import Menu
+from stack import Stack
 
 
+# Screen
+screen_width = 1000
+screen_height = 800
+screen = pygame.display.set_mode((screen_width, screen_height))
 
-# Main loop
-run = True
-while run:
-    # print("maths", menu.maths_mode)
-    # print("spellign",menu.spelling_mode)
+# Colours
+RED = (255,0,0)
+GREEN = (0,255,0)
+BLUE = (0,0,255)
+WHITE = (255,255,255)
+BLACK = (0,0,0)
+GREY = (79, 79, 79)
 
-    # Menu browsing and updating
-    if menu.in_game == False:
-        # Find the position of the mouse
-        pos = pygame.mouse.get_pos()
-        # Update the menu, feeding the clicked variable and mouse position into the function
-        menu.update(pos) # Set the clicked variable as the returned value from the menu
+# Font
+time_font = pygame.font.SysFont("Bahnschrift", 100)
+user_input_font = pygame.font.SysFont("Bahnschrift", 40)
+question_font = pygame.font.SysFont("Bahnschrift", 50)
+score_font = pygame.font.SysFont("Bahnschrift", 30)
 
-        # Only if we are in the paused menu, should we draw a "faded" timer
-        if menu.show_paused_menu == True:
-            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)   
+# Retrieve words from a website
+words_url = "https://www.mit.edu/~ecprice/wordlist.10000"
+get_words = urllib.request.urlopen(words_url)
+entire_text = get_words.read().decode()
+list_of_words = entire_text.splitlines()
 
-        # Check if the player has requested to restart the game
-        if menu.reset_game == True:
-            # Reset all of the game variables
-            time_counter, player_score, stack, user_text, starting_setup = reset_game(time_counter, player_score, stack, user_text, starting_setup)
-            
-            # Reset the current modes (In case the player wants to try a different mode)
-            menu.maths_mode = False
-            menu.spelling_mode = False
-            
-            # Now that the game has been reset, set this variable back to False
-            menu.reset_game = False 
 
+def draw_text(text, font, text_colour, x, y):
+    image = font.render(text, True, text_colour)
+    screen.blit(image, (x, y))
+
+def draw_alpha_text(text, font, text_colour,  x, y):
+    alpha_text = font.render(text, True ,text_colour)
+    alpha_text.set_alpha(70)
+    screen.blit(alpha_text,(x,y))
+
+def random_stack_list_generator():
+    stack_list = []
+    # Generate a random index, which will represent the index for the element where the player must reach before the time is up.
+    random_index = random.randrange(0,5)
+    player_random_index = random.randrange(0,5)
+    
+    # In the case that the player spawning index and the goal index is the same, keep generating new indexes for the player
+    while player_random_index == random_index:  
+        player_random_index = random.randrange(0,5)
+
+    # Create a stack list with 6 elements
+    for i in range(0, 6):
+        # If the current index is equal to the random plyae rindex we generated earlier, set the item value as 2
+        if i == player_random_index:
+            item_value = 2
+
+        # If the current index is equal to the random index we generated earlier, set the item value as 1
+        elif i == random_index:
+            item_value = 1
+
+        # If the current index is not equal to the random index we generated earlier or the player index, set the item value as 0
+        else:
+            item_value = 0
+
+        # Append the items to the list used in the stack
+        stack_list.append(item_value)
+
+    return stack_list
+
+def random_maths_question_generator():
+    # Choose a random operation for the question to have
+    random_operation = random.randrange(0,4) # 0 = Addition, 1 = Subtraction, 2 = Multiplication, 3 = Division, 4 = MOD
+
+    # Addition
+    if random_operation == 0:
+        # Generate random numbers
+        random_number_1 = random.randrange(0,20)
+        random_number_2 = random.randrange(0,20)
+
+        # Store the answer for the question later
+        answer = random_number_1 + random_number_2 
+        question = f'{random_number_1} + {random_number_2} = ?'
+
+    # Subtraction
+    if random_operation == 1:
+        # Generate random numbers
+        random_number_1 = random.randrange(0,20)
+        random_number_2 = random.randrange(0,20)
+
+        # Store the answer for the question later
+        answer = random_number_1 - random_number_2 
+        question = f'{random_number_1} - {random_number_2} = ?'   
+
+    # Multiplication
+    if random_operation == 2:
+        # Generate random numbers
+        random_number_1 = random.randrange(1,12)
+        random_number_2 = random.randrange(0,12)
+        
+        # Store the answer for the question later
+        answer = random_number_1 * random_number_2 
+        question = f'{random_number_1} x {random_number_2} = ?'   
+
+    # Division
+    if random_operation == 3:
+        # Generate random numbers
+        random_number_1 = random.randrange(1,50)
+        random_number_2 = random.randrange(1,10)
+
+        # In the case that the the first number is not divisible by the second number
+        while random_number_1 % random_number_2 != 0:
+            # Generate different random numbers
+            random_number_1 = random.randrange(1,50)
+            random_number_2 = random.randrange(1,10)
+
+        # Store the answer for the question later
+        answer = int(random_number_1 / random_number_2)
+        question = f'{random_number_1} divided by {random_number_2} = ?'   
+
+    # MOD
+    if random_operation == 4:
+        random_number_1 = random.randrange(1,50)
+        random_number_2 = random.randrange(1,5)
+        # In the case that the first number is lower than the second number
+        while random_number_1 < random_number_2:
+            # Generate different random numbers
+            random_number_1 = random.randrange(1,50)
+            random_number_2 = random.randrange(1,5)
+
+        # Store the answer for the question later
+        answer = random_number_1 % random_number_2 
+        question = f'{random_number_1} MOD {random_number_2} = ?'   
+
+    return answer, question
+
+def random_spelling_question_generator(words_list):
+    # Generate a random index (this will choose one random word)
+    random_word_index = random.randrange(0, len(words_list) - 1)
+    answer = words_list[random_word_index]
+    question = f'Spell : {answer}'
+    # Return the word
+    return answer, question
+
+def ask_question(words_list):
+    # Check which mode it is
+    # The maths mode will keep asking maths questions when the function is called
+    if menu.maths_mode == True:
+        answer, question = random_maths_question_generator()
+    # The spelling mode will keep asking spelling questions when the function is called
+    if menu.spelling_mode == True:
+        answer, question = random_spelling_question_generator(words_list)
+    return answer, question
+
+def reset_game(time_counter, player_score, stack, user_text, starting_setup):
+
+    # Reset the timer
+    time_counter = 30000
+    
+    # Allow for the starting setup again
+    starting_setup = True
+
+    # Reset the player score 
+    player_score = 0
+
+    # Delete the current stack instance
+    del stack
+    # Generate a new starting stack instance
+    random_stack_list = random_stack_list_generator()
+    stack = Stack(random_stack_list)
+
+    # Reset the user input text
+    user_text = ""
+
+    return time_counter, player_score, stack, user_text, starting_setup
+
+def game_v1(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time):
 
     # INGAME
     if menu.in_game == True:
@@ -115,9 +233,11 @@ while run:
     
             # Create the starting question 
             current_question_answer, current_question = ask_question(list_of_words)
+            print(current_question_answer, current_question)
 
+           
             starting_setup = False
-        
+
         if stack.update_stack_list == True:
             
             # Increment the score
@@ -135,7 +255,17 @@ while run:
 
         # Draw the current question at the top of the screen
         draw_text(current_question, question_font, WHITE, 390, 120)
-
+        
+        # Draw the correct / incorrect text based on if the player answered the question correctly
+        if answered_correctly == 1: # Correct
+            if pygame.time.get_ticks() - question_answered_time < 1000:
+                # Draw the "Correct" text
+                draw_text("Correct!", question_font, GREEN, 100, 390)
+        elif answered_correctly == -1: # Incorrect
+            if pygame.time.get_ticks() - question_answered_time < 1000:
+                # Draw the "Incorrect" text
+                draw_text("Incorrect!", question_font, RED, 690, 390)            
+            
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # USER INPUT
         text_image = user_input_font.render(user_text, True, BLACK)
@@ -180,76 +310,73 @@ while run:
 
                 # If the player wants to travel up the stack
                 if event.key == K_RIGHTBRACKET and len(user_text) > 0 and user_text != "-":
-                    # Check if the user input is the same as the answer
+                    # Record the time the player answered the question
+                    question_answered_time = pygame.time.get_ticks()        
 
+                    # Check if the user input is the same as the answer
                     if menu.maths_mode == True:
                         if int(user_text) == current_question_answer :
-                            print("Correct")
                             # Move the player up the stack 
                             stack.travel_up()
-
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
-
+                            # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
+                            answered_correctly = 1
                         else:
-                            print("Incorrect")
+                            # Set the variable answered correctly to -1 (so that the "incorrect" text can be displayed)
+                            answered_correctly = -1                   
                         
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
-
                     elif menu.spelling_mode == True:
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_up()
-
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)
-
+                            # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
+                            answered_correctly = 1
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "incorrect" text can be displayed)
+                            answered_correctly = -1   
+                              
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player wants to travel down the stack
                 elif event.key == K_HASH and len(user_text) > 0 and user_text != "-":
+                    # Record the time the player answered the question
+                    question_answered_time = pygame.time.get_ticks()
 
                     if menu.maths_mode == True:
                         # Check if the user input is the same as the answer
                         if int(user_text) == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_down()
-
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
-
+                            # Set the variable answered correctly to 1 (so that the "Correct" text can be displayed)
+                            answered_correctly = 1 
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "Incorrect" text can be displayed)
+                            answered_correctly = -1   
                         
                     elif menu.spelling_mode == True:
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_down()
 
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)
 
+                            # Set the variable answered correctly to 1 (so that the "Correct" text can be displayed)
+                            answered_correctly = 1 
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "Incorrect" text can be displayed)
+                            answered_correctly = -1                    
+
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player has pressed any other key
                 else:   
@@ -263,16 +390,16 @@ while run:
                                 user_text += event.unicode
                     
                     elif menu.spelling_mode == True:
-                        # Check that the key pressed isn't a number
-                        if event.key not in [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]:
+                        # Check that the key pressed is in the alphabet (a - z)
+                        if 97 <= event.key <= 123:
+                            print(event.key)
                             # Check that the player hasn't written more than 20 digits
                             if len(user_text) <= 20:
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
+    
+    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time
 
 
-
-
-
-
-    pygame.display.update()
+# Instances
+menu = Menu(0,0,screen)
