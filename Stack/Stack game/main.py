@@ -14,6 +14,8 @@ user_text = "" # Holds the numbers that the user types into the input box
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
 starting_setup = True
+answered_correctly = 0 # 1 = Correct, -1 = Incorrect
+
 
 # Check if a text file called "high_score" exists
 if os.path.exists('high_score.txt'):
@@ -29,9 +31,6 @@ else:
 # Main loop
 run = True
 while run:
-    # print("maths", menu.maths_mode)
-    # print("spellign",menu.spelling_mode)
-
     # Menu browsing and updating
     if menu.in_game == False:
         # Find the position of the mouse
@@ -54,7 +53,6 @@ while run:
             
             # Now that the game has been reset, set this variable back to False
             menu.reset_game = False 
-
 
     # INGAME
     if menu.in_game == True:
@@ -133,7 +131,17 @@ while run:
 
         # Draw the current question at the top of the screen
         draw_text(current_question, question_font, WHITE, 390, 120)
-
+        
+        # Draw the correct / incorrect text based on if the player answered the question correctly
+        if answered_correctly == 1: # Correct
+            if pygame.time.get_ticks() - question_answered_time < 1000:
+                # Draw the "Correct" text
+                draw_text("Correct!", question_font, GREEN, 100, 390)
+        elif answered_correctly == -1: # Incorrect
+            if pygame.time.get_ticks() - question_answered_time < 1000:
+                # Draw the "Incorrect" text
+                draw_text("Incorrect!", question_font, RED, 690, 390)            
+            
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # USER INPUT
         text_image = user_input_font.render(user_text, True, BLACK)
@@ -178,76 +186,73 @@ while run:
 
                 # If the player wants to travel up the stack
                 if event.key == K_RIGHTBRACKET and len(user_text) > 0 and user_text != "-":
-                    # Check if the user input is the same as the answer
+                    # Record the time the player answered the question
+                    question_answered_time = pygame.time.get_ticks()        
 
+                    # Check if the user input is the same as the answer
                     if menu.maths_mode == True:
                         if int(user_text) == current_question_answer :
-                            print("Correct")
                             # Move the player up the stack 
                             stack.travel_up()
-
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
-
+                            # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
+                            answered_correctly = 1
                         else:
-                            print("Incorrect")
+                            # Set the variable answered correctly to -1 (so that the "incorrect" text can be displayed)
+                            answered_correctly = -1                   
                         
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
-
                     elif menu.spelling_mode == True:
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_up()
-
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)
-
+                            # Set the variable answered correctly to 1 (so that the "correct" text can be displayed)
+                            answered_correctly = 1
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "incorrect" text can be displayed)
+                            answered_correctly = -1   
+                              
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player wants to travel down the stack
                 elif event.key == K_HASH and len(user_text) > 0 and user_text != "-":
+                    # Record the time the player answered the question
+                    question_answered_time = pygame.time.get_ticks()
 
                     if menu.maths_mode == True:
                         # Check if the user input is the same as the answer
                         if int(user_text) == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_down()
-
                             # Generate a new question
                             current_question_answer, current_question = random_maths_question_generator()
-
+                            # Set the variable answered correctly to 1 (so that the "Correct" text can be displayed)
+                            answered_correctly = 1 
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "Incorrect" text can be displayed)
+                            answered_correctly = -1   
                         
                     elif menu.spelling_mode == True:
                         # Check if the user input is the same as the answer
                         if user_text == current_question_answer:
-                            print("Correct")
-
                             # Move the player down the stack
                             stack.travel_down()
 
                             # Generate a new question
                             current_question_answer, current_question = random_spelling_question_generator(list_of_words)
 
+                            # Set the variable answered correctly to 1 (so that the "Correct" text can be displayed)
+                            answered_correctly = 1 
                         else:
-                            print("Incorrect")
-                            
-                        # Reset the user text (regardless if it was correct or incorrect)
-                        user_text = ""
+                            # Set the variable answered correctly to -1 (so that the "Incorrect" text can be displayed)
+                            answered_correctly = -1                    
+
+                    # Reset the user text (regardless if it was correct or incorrect)
+                    user_text = ""
 
                 # If the player has pressed any other key
                 else:   
@@ -268,9 +273,6 @@ while run:
                             if len(user_text) <= 20:
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
-
-
-
 
 
 
