@@ -21,6 +21,9 @@ continue_image = pygame.image.load('graphics/Buttons/continue_button.png').conve
 maths_image = pygame.image.load('graphics/Buttons/maths_button.png').convert()
 spelling_image = pygame.image.load('graphics/Buttons/spelling_button.png').convert()
 
+goal_element_image = pygame.image.load('graphics/Buttons/goal_element_button.png').convert()
+goal_height_image = pygame.image.load('graphics/Buttons/goal_height_button.png').convert()
+
 # Colours
 RED = (255,0,0)
 GREEN = (0,255,0)
@@ -71,6 +74,11 @@ class Menu():
         self.spelling_mode = False
         self.maths_mode = False
 
+        self.show_choose_game_menu = False # Determines whether we should show the menu where the player can choose which game they want to play
+        # Games
+        self.game_v1 = False # Goal element game
+        self.game_v2 = False # Goal height game
+
         # Time tracking
         self.menu_times_dictionary = {"in_menu_time": 0, "entered_menu_time": 0}
 
@@ -79,19 +87,14 @@ class Menu():
         # MAIN MENU
         if self.show_main_menu == True:
             # Fill the screen with a white background
-            screen.fill(WHITE)
+            screen.fill("dodgerblue4")
 
             # PLAY BUTTON
             # If the mouse is over the play button and is the mouse button is clicked
             if play_button.update(pos) == True and self.clicked == True: 
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False
-                # # Set the time that the player entered the game to be now
-                # self.entered_game_time = pygame.time.get_ticks()
-                # # Set the main menu to stop showing and start the game
-                # self.show_main_menu = False
-                # self.in_game = True
-
+                
                 # Display the mode chooser menu
                 self.show_main_menu = False
                 self.show_choose_mode_menu = True
@@ -148,7 +151,7 @@ class Menu():
 
         # PAUSED MENU
         if self.show_paused_menu == True:
-            screen.fill(RED)
+            screen.fill("dodgerblue4")
 
             # Check if the value inside "entered menu time" key in the menu times dictionary is 0
             if self.menu_times_dictionary["entered_menu_time"] == 0:
@@ -193,7 +196,7 @@ class Menu():
 
         # RESTART MENU
         if self.show_restart_menu == True:
-            screen.fill("purple")
+            screen.fill("dodgerblue4")
 
             # RETURN TO MAIN MENU BUTTON
             if return_to_main_menu_button.update(pos) == True and self.clicked == True:
@@ -224,7 +227,7 @@ class Menu():
         if self.show_choose_mode_menu == True:
 
             # Fill the screen with a white background
-            screen.fill(GREY)  
+            screen.fill("dodgerblue4") 
             # Borders for the maths and spelling buttons
             pygame.draw.rect(screen, BLACK, (195, 195, 260, 260), 5)
             pygame.draw.rect(screen, BLACK, (545, 195, 260, 260), 5)
@@ -236,11 +239,10 @@ class Menu():
 
                 # Set the mode to be the maths mode
                 self.maths_mode = True
-                # Set the time that the player entered the game to be now
-                self.entered_game_time = pygame.time.get_ticks()
-                # Set the mode menu to stop showing and start the game
+
+                # Set the mode menu to stop showing and show the choose game menu
                 self.show_choose_mode_menu = False
-                self.in_game = True
+                self.show_choose_game_menu = True
             
             # If the spelling mode was clicked
             if spelling_button.update(pos) == True and self.clicked == True:
@@ -250,11 +252,9 @@ class Menu():
                 # Set the mode to be the spelling mode
                 self.spelling_mode = True
 
-                # Set the time that the player entered the game to be now
-                self.entered_game_time = pygame.time.get_ticks()
-                # Set the mode menu to stop showing and start the game
+                # Set the mode menu to stop showing and show the choose game menu
                 self.show_choose_mode_menu = False
-                self.in_game = True
+                self.show_choose_game_menu = True
 
             # If the back button was clicked
             if back_button.update(pos) == True and self.clicked == True:
@@ -269,6 +269,52 @@ class Menu():
             elif maths_button.update(pos) == False and spelling_button.update(pos) == False and back_button.update(pos) == False and self.clicked == True:
                 # Reset the clicked variable to default so more clicks can be detected
                 self.clicked = False    
+
+
+        # CHOOSE GAME MENU
+        if self.show_choose_game_menu == True:
+            screen.fill("dodgerblue4")
+
+            # Borders for the two game buttons
+            pygame.draw.rect(screen, BLACK, (145, 195, 310, 310), 5)
+            pygame.draw.rect(screen, BLACK, (545, 195, 310, 310), 5)
+
+            # If the goal element game was pressed
+            if goal_element_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+                # Set the game to be loaded to be the goal element game
+                self.game_v1 = True
+                # Set the time that the player entered the game to be now
+                self.entered_game_time = pygame.time.get_ticks()
+                # Set the mode menu to stop showing and start the game
+                self.show_choose_game_menu = False
+                self.in_game = True
+
+            if goal_height_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+                # Set the game to be loaded to be the goal height game
+                self.game_v2 = True
+                # Set the time that the player entered the game to be now
+                self.entered_game_time = pygame.time.get_ticks()
+                # Set the mode menu to stop showing and start the game
+                self.show_choose_game_menu = False
+                self.in_game = True
+
+            # If the back button was clicked
+            if back_button.update(pos) == True and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+                # Go back to the choose mode menu
+                self.show_choose_mode_menu = True
+                self.show_choose_game_menu = False
+
+            # If none of the buttons were clicked, the player clicked on empty space
+            elif goal_element_button.update(pos) == False and goal_height_button.update(pos) == False and back_button.update(pos) == False and self.clicked == True:
+                # Reset the clicked variable to default so more clicks can be detected
+                self.clicked = False    
+
 
 # Button instances
 
@@ -293,3 +339,8 @@ quit_button_3 = Button(300, 600, quit_image)
 maths_button = Button(200, 200, maths_image)
 spelling_button = Button(800 - 250, 200, spelling_image)
 back_button_2 = Button(300, 600, back_image)
+
+# Choose game menu
+goal_element_button = Button(150, 200, goal_element_image)
+goal_height_button = Button(850 - 300, 200, goal_height_image)
+back_button_3 = Button(300, 600, back_image)

@@ -58,12 +58,33 @@ while run:
             # Reset the current modes (In case the player wants to try a different mode)
             menu.maths_mode = False
             menu.spelling_mode = False
+            menu.game_v1 = False
+            menu.game_v2 = False
             
             # Now that the game has been reset, set this variable back to False
             menu.reset_game = False 
 
     # Game 1 (Reach the goal element)
-    time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time = game_v1(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time)
+    if menu.game_v1 == True:
+        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time = game_v1(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time)
+    
+    # Game 2 (Reach the goal height by pushing and popping elements)
+    if menu.game_v2 == True:
+        print("Second game")
+
+    # Event handler
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            run = False
+            pygame.quit()
+            sys.exit()
+
+        # Check if the mouse button has been pressed
+        if event.type == MOUSEBUTTONDOWN:
+            # Check if the mouse button clicked was the left click
+            if event.button == 1: # (1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scrolldown)
+                menu.clicked = True
+
 
 
     pygame.display.update()

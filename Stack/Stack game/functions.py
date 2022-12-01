@@ -30,6 +30,7 @@ entire_text = get_words.read().decode()
 list_of_words = entire_text.splitlines()
 
 
+
 def draw_text(text, font, text_colour, x, y):
     image = font.render(text, True, text_colour)
     screen.blit(image, (x, y))
@@ -289,7 +290,8 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
             pygame.quit()
             sys.exit()
 
-        # Check if the mouse button has been pressed
+        # Check if the mouse button has been pressed 
+        # Note: This has not been removed because the player still needs to be able to click on buttons in the restart menu. Also additional features which involve the mouse may be included later on.
         if event.type == MOUSEBUTTONDOWN:
             # Check if the mouse button clicked was the left click
             if event.button == 1: # (1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scrolldown)
@@ -392,7 +394,6 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
                     elif menu.spelling_mode == True:
                         # Check that the key pressed is in the alphabet (a - z)
                         if 97 <= event.key <= 123:
-                            print(event.key)
                             # Check that the player hasn't written more than 20 digits
                             if len(user_text) <= 20:
                                 # Contacenate the key the user pressed to the user text
@@ -400,6 +401,9 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
     
     return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time
 
+
+def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time):
+    pass
 
 # Instances
 menu = Menu(0,0,screen)
