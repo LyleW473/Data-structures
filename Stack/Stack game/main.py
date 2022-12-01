@@ -29,6 +29,8 @@ else:
 # Main loop
 run = True
 while run:
+    # print("maths", menu.maths_mode)
+    # print("spellign",menu.spelling_mode)
 
     # Menu browsing and updating
     if menu.in_game == False:
@@ -259,8 +261,9 @@ while run:
                                 user_text += event.unicode
                     
                     elif menu.spelling_mode == True:
-                        # Check that the key pressed isn't a number
-                        if event.key not in [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]:
+                        # Check that the key pressed is in the alphabet (a - z)
+                        if 97 <= event.key <= 123:
+                            print(event.key)
                             # Check that the player hasn't written more than 20 digits
                             if len(user_text) <= 20:
                                 # Contacenate the key the user pressed to the user text
