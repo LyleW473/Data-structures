@@ -421,7 +421,7 @@ def draw_dashed_lines(height):
         pygame.draw.line(screen, GREEN, (0 + (40 * i), height), (40 + (40 * i), height), 5)
 
 
-def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height):
+def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement):
 
     # INGAME
     if menu.in_game == True:
@@ -447,22 +447,34 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
         if time_counter <= 0:
 
             # Check if the height that the player is at matches with the threshold height generated earlier
-            if threshold_height_tuples[len(stack.items_list) - 1][1] == threshold_height:
-
-                # Reset the timer
-                time_counter = 5000
+            if threshold_height_tuples[len(stack.items_list) - 2][1] == threshold_height:
 
                 # Generate a new threshold height that is different from the last key
-                threshold_height = threshold_height_tuples[random.randrange(1,6)][1] 
+                threshold_height = threshold_height_tuples[random.randrange(1,5)][1] 
                 
                 # In the case that the threshold height is the same as the last height
                 while threshold_height == last_threshold_height:
     
                     # Keep generating another random height until they aren't the same
-                    threshold_height = threshold_height_tuples[random.randrange(1,6)][1]
+                    threshold_height = threshold_height_tuples[random.randrange(1,5)][1]
 
                 # Set the last threshold height to be the current threshold height
                 last_threshold_height = threshold_height
+
+
+                # Limit the time decrement to be 2 seconds. This means that the player will have 6 seconds no even after 10 "rounds"
+                if permanent_time_decrement < 2000:
+                    # Increase the time decrement to 0.20 seconds
+                    permanent_time_decrement += 200 # Milliseconds
+                 
+                # Reset the timer and add the permanent time decrement (this is to increase difficulty as time goes on)
+                time_counter = 8000 - permanent_time_decrement
+
+                # Generate a new question 
+                current_question_answer, current_question = ask_question(list_of_words) 
+
+                # Reset the user text
+                user_text = ""
                 
             else:
                 # The player has lost, so go out of the game and into the restart menu
@@ -505,8 +517,8 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             print(current_question_answer, current_question)
             
             # Generate a random starting threshold height
-            threshold_height = threshold_height_tuples[random.randrange(1,6)][1]
-            
+            threshold_height = threshold_height_tuples[random.randrange(1,5)][1]
+
             # Set the previous height to be this one (this is so that later on, we don't get the same height generated twice in a row)
             last_threshold_height = threshold_height
 
@@ -677,7 +689,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
     
-    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height
+    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement    
 
 # Instances
 menu = Menu(0,0,screen)
