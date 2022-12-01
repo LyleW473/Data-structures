@@ -70,8 +70,8 @@ while run:
     
     # Game 2 (Reach the goal height by pushing and popping elements)
     if menu.game_v2 == True:
-        print("Second game")
-
+        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time)
+   
     # Event handler
     for event in pygame.event.get():
         if event.type == QUIT:

@@ -127,3 +127,45 @@ class Stack():
                 # Mouth
                 pygame.draw.line(screen, BLACK, (480, 225 + (i * (rect_height + 5)) + (rect_height / 2)) , (520, 225 + (i * (rect_height + 5)) + (rect_height / 2)), 3)
         
+class Stack2(Stack):
+    def __init__(self, items_list = [] ):
+        Stack.__init__(self, items_list) # Stack 2 (for the goal height game) inherits Stack(From the goal element game)
+
+
+    def pop(self):
+        pass
+
+    def push(self):
+        pass
+
+    def draw(self):
+        # Width and height for the stack element rectangles
+        rect_width = 200
+        rect_height = 75
+
+        # Border
+        pygame.draw.rect(screen, BLACK, (500 - (rect_width / 2) - 5, 200 - 5, rect_width + 10, rect_height * len(self.items_list) + (len(self.items_list) * 5) + 5), 0)   
+
+        # Generate rectangles (one for each stack element)
+        for i in range(0, len(self.items_list)):
+            # Any other stack item 
+            if self.items_list[i] == 0:
+                stack_item_colour = WHITE
+            # The goal position
+            elif self.items_list[i] == 1:
+                stack_item_colour = GREEN
+            # The player 
+            elif self.items_list[i] == 2:
+                stack_item_colour = RED
+
+            # Draw the rectangle
+            pygame.draw.rect(screen, stack_item_colour, (500 - (rect_width / 2), 200 + (i * (rect_height + 5)), rect_width, rect_height), 0)   
+
+            # Drawing eyes and a mouth on the player
+            if self.items_list[i] == 2:
+                # Left eye
+                pygame.draw.circle(screen, BLACK, (460, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
+                # Right eye
+                pygame.draw.circle(screen, BLACK, (540, 200 + (i * (rect_height + 5)) + (rect_height / 2) ), 10, 50)
+                # Mouth
+                pygame.draw.line(screen, BLACK, (480, 220 + (i * (rect_height + 5)) + (rect_height / 2)) , (520, 220 + (i * (rect_height + 5)) + (rect_height / 2)), 5)
