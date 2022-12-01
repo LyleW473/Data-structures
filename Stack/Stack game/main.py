@@ -16,16 +16,30 @@ starting_setup = True
 answered_correctly = 0 # 1 = Correct, -1 = Incorrect
 
 
-# Check if a text file called "high_score" exists
-if os.path.exists('high_score.txt'):
+# Check if a text file called "high_score_1" exists
+if os.path.exists('high_score_1.txt'):
     # Read the contents of the file:
-    with open('high_score.txt', 'r') as high_score_file:
+    with open('high_score_1.txt', 'r') as high_score_file:
         # Set the high score to be the value inside that file
         high_score = int(high_score_file.read())
 # If it doesn't exist
 else:
     # Set the high score as 0
     high_score = 0
+
+
+# Check if a text file called "high_score_2" exists
+if os.path.exists('high_score_2.txt'):
+    # Read the contents of the file:
+    with open('high_score_2.txt', 'r') as high_score_2_file:
+        # Set the high score to be the value inside that file
+        high_score_2 = int(high_score_2_file.read())
+# If it doesn't exist
+else:
+    # Set the high score as 0
+    high_score_2 = 0
+
+
 
 # Placeholder values for these items 
 stack = 0
@@ -75,7 +89,7 @@ while run:
     
     # Game 2 (Reach the goal height by pushing and popping elements)
     if menu.game_v2 == True:
-        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement)
+        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement)
    
     # Event handler
     for event in pygame.event.get():

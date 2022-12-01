@@ -421,7 +421,7 @@ def draw_dashed_lines(height):
         pygame.draw.line(screen, GREEN, (0 + (40 * i), height), (40 + (40 * i), height), 5)
 
 
-def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement):
+def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement):
 
     # INGAME
     if menu.in_game == True:
@@ -475,6 +475,9 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
 
                 # Reset the user text
                 user_text = ""
+
+                # Increment the score 
+                player_score += 1
                 
             else:
                 # The player has lost, so go out of the game and into the restart menu
@@ -485,16 +488,16 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # SCORE
         # If the player's current score is greater than the high score
-        if player_score > high_score:
+        if player_score > high_score_2:
             # Set the high score as the player's current score
-            high_score = player_score
+            high_score_2 = player_score
             # Write the score into a new file 
-            with open("high_score.txt", "w") as high_score_file:
-                high_score_file.write(str(high_score))
+            with open("high_score_2.txt", "w") as high_score_2_file:
+                high_score_2_file.write(str(high_score_2))
 
         # Drawing the high score onto the screen
         draw_text("High score:", score_font, WHITE, 50, 660)
-        draw_text(str(high_score), score_font, WHITE, 205, 661)
+        draw_text(str(high_score_2), score_font, WHITE, 205, 661)
 
         # Drawing the score onto the screen
         draw_text("Score:", score_font, WHITE, 50, 710)
@@ -689,7 +692,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
     
-    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement    
+    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement    
 
 # Instances
 menu = Menu(0,0,screen)
