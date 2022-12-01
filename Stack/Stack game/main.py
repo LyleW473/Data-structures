@@ -32,6 +32,7 @@ stack = 0
 current_question = 0
 current_question_answer = 0
 question_answered_time = 0
+threshold_height = 0
 
 # Main loop
 run = True
@@ -71,7 +72,7 @@ while run:
     
     # Game 2 (Reach the goal height by pushing and popping elements)
     if menu.game_v2 == True:
-        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time)
+        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height)
    
     # Event handler
     for event in pygame.event.get():

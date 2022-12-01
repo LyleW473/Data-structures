@@ -401,6 +401,8 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
     
     return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time
 
+
+# Specific to the 2nd game
 def random_stack_list_generator_2():
     # Generate a random number for the height of the stack (1 to 6)
     initial_height = random.randrange(1, 6)
@@ -414,8 +416,12 @@ def random_stack_list_generator_2():
     return stack_list
 
 
+def draw_dashed_lines(height):
+    for i in range(0, int(screen_width / 40), 2): # Draws at 0, 2, 4, 6, and so on.
+        pygame.draw.line(screen, GREEN, (0 + (40 * i), height), (40 + (40 * i), height), 5)
+    
 
-def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time):
+def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height):
 
     # INGAME
     if menu.in_game == True:
@@ -465,6 +471,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
         # STACK GAMEPLAY
         # Check if we need to update the stack (The player has reached the goal node)
 
+        # The starting set-up 
         if starting_setup == True:
             # Starting stack:
             # Generate a random list for the stack
@@ -475,7 +482,11 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             # Create the starting question 
             current_question_answer, current_question = ask_question(list_of_words)
             print(current_question_answer, current_question)
-           
+            
+            # Generate a random starting threshold height
+            threshold_height = random.choice([600 - 8, 512, 432, 352, 272, 192])
+
+            # The starting set-up is now complete
             starting_setup = False
 
         if stack.update_stack_list == True:
@@ -492,6 +503,10 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
 
         # Draw the stack
         stack.draw()
+
+        # Draw the dashed lines that the stack height must be at
+        #pygame.draw.line(screen, GREEN, (0, threshold_height), (screen_width , threshold_height) , 5)
+        draw_dashed_lines(threshold_height)
 
         # Draw the current question at the top of the screen
         draw_text(current_question, question_font, WHITE, 390, 120)
@@ -638,7 +653,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
     
-    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time
+    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height
 
 # Instances
 menu = Menu(0,0,screen)
