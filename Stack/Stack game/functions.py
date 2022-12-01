@@ -154,10 +154,16 @@ def ask_question(words_list):
     return answer, question
 
 def reset_game(time_counter, player_score, stack, user_text, starting_setup):
-
-    # Reset the timer
-    time_counter = 30000
+    # If the game was reset from game 1
+    if menu.game_v1 == True:
+        # Reset the timer
+        time_counter = 30000
+    # If the game was reset from game 2
+    elif menu.game_v2 == True: 
+        # Reset the timer
+        time_counter = 8000    
     
+    # Note: The following are the same for both games, this is subject to change.
     # Allow for the starting setup again
     starting_setup = True
 
@@ -421,7 +427,7 @@ def draw_dashed_lines(height):
         pygame.draw.line(screen, GREEN, (0 + (40 * i), height), (40 + (40 * i), height), 5)
 
 
-def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement):
+def game_v2(time_counter_2, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement):
 
     # INGAME
     if menu.in_game == True:
@@ -430,12 +436,12 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # TIME
         # Draw the timer at the top of the screen
-        draw_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)
+        draw_text(str(round(time_counter_2 / 1000, 2)), time_font, BLACK, 390, 0)
 
         # Constantly check the time
         if pygame.time.get_ticks() - menu.entered_game_time > 1:
             # The time should be (the time counter + any time that the player spent in the menu) - (the amount of time that its been since the last check)
-            time_counter = (time_counter + menu.menu_times_dictionary["in_menu_time"]) - (pygame.time.get_ticks() - menu.entered_game_time)
+            time_counter_2 = (time_counter_2 + menu.menu_times_dictionary["in_menu_time"]) - (pygame.time.get_ticks() - menu.entered_game_time)
 
             # Reset the values of all the menu times.
             menu.menu_times_dictionary.update({"in_menu_time": 0, "entered_menu_time": 0})
@@ -444,7 +450,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             menu.entered_game_time = pygame.time.get_ticks()
             
         # If the time counter has gone below 0
-        if time_counter <= 0:
+        if time_counter_2 <= 0:
 
             # Check if the height that the player is at matches with the threshold height generated earlier
             if threshold_height_tuples[len(stack.items_list) - 2][1] == threshold_height:
@@ -468,7 +474,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                     permanent_time_decrement += 200 # Milliseconds
                  
                 # Reset the timer and add the permanent time decrement (this is to increase difficulty as time goes on)
-                time_counter = 8000 - permanent_time_decrement
+                time_counter_2 = 8000 - permanent_time_decrement
 
                 # Generate a new question 
                 current_question_answer, current_question = ask_question(list_of_words) 
@@ -692,7 +698,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
     
-    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement    
+    return time_counter_2, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement    
 
 # Instances
 menu = Menu(0,0,screen)

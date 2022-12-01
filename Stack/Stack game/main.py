@@ -8,13 +8,13 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # Game variables
-time_counter = 5000 # 30 seconds in milliseconds
+time_counter = 30000 # 30 seconds in milliseconds
+time_counter_2 = 8000 # The time counter for game 2
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
 starting_setup = True
 answered_correctly = 0 # 1 = Correct, -1 = Incorrect
-
 
 # Check if a text file called "high_score_1" exists
 if os.path.exists('high_score_1.txt'):
@@ -71,9 +71,14 @@ while run:
 
         # Check if the player has requested to restart the game
         if menu.reset_game == True:
-            # Reset all of the game variables
-            time_counter, player_score, stack, user_text, starting_setup = reset_game(time_counter, player_score, stack, user_text, starting_setup)
-            
+            # Check which game called the reset function
+            if menu.game_v1 == True:
+                # Reset all of the game variables
+                time_counter, player_score, stack, user_text, starting_setup = reset_game(time_counter, player_score, stack, user_text, starting_setup)
+            elif menu.game_v2 == True:
+                # Reset all of the game variables
+                time_counter_2, player_score, stack, user_text, starting_setup = reset_game(time_counter_2, player_score, stack, user_text, starting_setup)
+
             # Reset the current modes (In case the player wants to try a different mode)
             menu.maths_mode = False
             menu.spelling_mode = False
@@ -89,7 +94,7 @@ while run:
     
     # Game 2 (Reach the goal height by pushing and popping elements)
     if menu.game_v2 == True:
-        time_counter, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement = game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement)
+        time_counter_2, user_text, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement = game_v2(time_counter_2, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score_2, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height, permanent_time_decrement)
    
     # Event handler
     for event in pygame.event.get():
