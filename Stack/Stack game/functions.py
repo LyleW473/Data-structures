@@ -419,12 +419,13 @@ def random_stack_list_generator_2():
 def draw_dashed_lines(height):
     for i in range(0, int(screen_width / 40), 2): # Draws at 0, 2, 4, 6, and so on.
         pygame.draw.line(screen, GREEN, (0 + (40 * i), height), (40 + (40 * i), height), 5)
-    
 
-def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height):
+
+def game_v2(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height):
 
     # INGAME
     if menu.in_game == True:
+
         screen.fill(GREY)   
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # TIME
@@ -442,8 +443,28 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             # Set the current time to now so that we can keep checking the time
             menu.entered_game_time = pygame.time.get_ticks()
             
-            # If the time counter has gone below 0
-            if time_counter <= 0:
+        # If the time counter has gone below 0
+        if time_counter <= 0:
+
+            # Check if the height that the player is at matches with the threshold height generated earlier
+            if threshold_height_tuples[len(stack.items_list) - 1][1] == threshold_height:
+
+                # Reset the timer
+                time_counter = 5000
+
+                # Generate a new threshold height that is different from the last key
+                threshold_height = threshold_height_tuples[random.randrange(1,6)][1] 
+                
+                # In the case that the threshold height is the same as the last height
+                while threshold_height == last_threshold_height:
+    
+                    # Keep generating another random height until they aren't the same
+                    threshold_height = threshold_height_tuples[random.randrange(1,6)][1]
+
+                # Set the last threshold height to be the current threshold height
+                last_threshold_height = threshold_height
+                
+            else:
                 # The player has lost, so go out of the game and into the restart menu
                 menu.in_game = False
                 # Show the restart menu
@@ -484,7 +505,10 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
             print(current_question_answer, current_question)
             
             # Generate a random starting threshold height
-            threshold_height = random.choice([600 - 8, 512, 432, 352, 272, 192])
+            threshold_height = threshold_height_tuples[random.randrange(1,6)][1]
+            
+            # Set the previous height to be this one (this is so that later on, we don't get the same height generated twice in a row)
+            last_threshold_height = threshold_height
 
             # The starting set-up is now complete
             starting_setup = False
@@ -653,7 +677,7 @@ def game_v2(time_counter, user_text, user_input_rectangle, player_score, startin
                                 # Contacenate the key the user pressed to the user text
                                 user_text += event.unicode
     
-    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height
+    return time_counter, user_text, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time, threshold_height, threshold_height_tuples, last_threshold_height
 
 # Instances
 menu = Menu(0,0,screen)
