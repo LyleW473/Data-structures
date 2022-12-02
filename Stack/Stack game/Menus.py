@@ -9,8 +9,11 @@ screen_width = 1000
 screen_height = 800
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+# Fonts
+menu_font = pygame.font.SysFont("Bahnschrift", 20)
+
 # Load images 
-# Most buttons are (400 x 25) pixels
+# Most buttons are (400 x 125) pixels
 play_image = pygame.image.load('graphics/Buttons/play_button.png').convert()
 controls_image = pygame.image.load('graphics/Buttons/controls_button.png').convert()
 quit_image = pygame.image.load('graphics/Buttons/quit_button.png').convert()
@@ -24,6 +27,10 @@ spelling_image = pygame.image.load('graphics/Buttons/spelling_button.png').conve
 goal_element_image = pygame.image.load('graphics/Buttons/goal_element_button.png').convert()
 goal_height_image = pygame.image.load('graphics/Buttons/goal_height_button.png').convert()
 
+game_over_display = pygame.image.load('graphics/Buttons/game_over_display.png').convert()
+controls_display = pygame.image.load('graphics/Buttons/controls_display.png').convert_alpha()
+
+
 # Colours
 RED = (255,0,0)
 GREEN = (0,255,0)
@@ -31,6 +38,10 @@ BLUE = (0,0,255)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 GREY = (79, 79, 79)
+
+def draw_text(text, font, text_colour, x, y):
+    image = font.render(text, True, text_colour)
+    screen.blit(image, (x, y))
 
 
 class Button():
@@ -127,7 +138,10 @@ class Menu():
 
         # CONTROLS MENU
         if self.show_controls_menu == True:
-            screen.fill(GREEN)
+            screen.fill("dodgerblue4")
+
+            # Display the controls onto the screen
+            screen.blit(controls_display, (75, 0))
 
             # BACK BUTTON
             if back_button.update(pos) == True and self.clicked == True:
@@ -198,6 +212,9 @@ class Menu():
         if self.show_restart_menu == True:
             screen.fill("dodgerblue4")
 
+            # Display the game over text onto the screen
+            screen.blit(game_over_display, (200, 80))
+
             # RETURN TO MAIN MENU BUTTON
             if return_to_main_menu_button.update(pos) == True and self.clicked == True:
                 # Reset the clicked variable to default so more clicks can be detected
@@ -231,6 +248,10 @@ class Menu():
             # Borders for the maths and spelling buttons
             pygame.draw.rect(screen, BLACK, (195, 195, 260, 260), 5)
             pygame.draw.rect(screen, BLACK, (545, 195, 260, 260), 5)
+
+            # Display guide text
+            draw_text("Answer maths questions!", menu_font, WHITE, 210, 500)
+            draw_text("Correctly spell the given word!", menu_font, WHITE, 538, 500)
 
             # If the maths mode was clicked
             if maths_button.update(pos) == True and self.clicked == True:
@@ -276,8 +297,13 @@ class Menu():
             screen.fill("dodgerblue4")
 
             # Borders for the two game buttons
-            pygame.draw.rect(screen, BLACK, (145, 195, 310, 310), 5)
-            pygame.draw.rect(screen, BLACK, (545, 195, 310, 310), 5)
+            pygame.draw.rect(screen, BLACK, (145, 155, 310, 310), 5)
+            pygame.draw.rect(screen, BLACK, (545, 155, 310, 310), 5)
+
+            # Display guide text
+            draw_text("Reach the goal element!", menu_font, WHITE, 190, 510)
+            draw_text("Reach the goal height!", menu_font, WHITE, 593, 510)
+
 
             # If the goal element game was pressed
             if goal_element_button.update(pos) == True and self.clicked == True:
@@ -332,8 +358,8 @@ controls_button_2 = Button(300, 400, controls_image)
 quit_button_2 = Button(300, 600, quit_image)
 
 # Restart menu
-return_to_main_menu_button = Button(300, 400, return_to_main_menu_image)
-quit_button_3 = Button(300, 600, quit_image)
+return_to_main_menu_button = Button(300, 350, return_to_main_menu_image)
+quit_button_3 = Button(300, 550, quit_image)
 
 # Choose mode menu
 maths_button = Button(200, 200, maths_image)
@@ -341,6 +367,6 @@ spelling_button = Button(800 - 250, 200, spelling_image)
 back_button_2 = Button(300, 600, back_image)
 
 # Choose game menu
-goal_element_button = Button(150, 200, goal_element_image)
-goal_height_button = Button(850 - 300, 200, goal_height_image)
+goal_element_button = Button(150, 160, goal_element_image)
+goal_height_button = Button(850 - 300, 160, goal_height_image)
 back_button_3 = Button(300, 600, back_image)
