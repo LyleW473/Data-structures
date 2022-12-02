@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 
 # Game variables
 time_counter = 30000 # 30 seconds in milliseconds
-time_counter_2 = 7000 # The time counter for game 2
+time_counter_2 = 8000 # The time counter for game 2
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
@@ -81,7 +81,7 @@ while run:
                 time_counter, player_score, stack, user_text, starting_setup = reset_game(time_counter, player_score, stack, user_text, starting_setup)
             elif menu.game_v2 == True:
                 # Reset all of the game variables
-                time_counter_2, player_score, stack, user_text, starting_setup = reset_game(time_counter_2, player_score, stack, user_text, starting_setup)
+                time_counter_2, player_score, stack, user_text, starting_setup, permanent_time_decrement = reset_game(time_counter_2, player_score, stack, user_text, starting_setup, permanent_time_decrement)
 
             # Reset the current modes (In case the player wants to try a different mode)
             menu.maths_mode = False

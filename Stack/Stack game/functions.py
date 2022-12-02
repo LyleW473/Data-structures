@@ -152,7 +152,7 @@ def ask_question(words_list):
         answer, question = random_spelling_question_generator(words_list)
     return answer, question
 
-def reset_game(time_counter, player_score, stack, user_text, starting_setup):
+def reset_game(time_counter, player_score, stack, user_text, starting_setup, permanent_time_decrement):
     # If the game was reset from game 1
     if menu.game_v1 == True:
         # Reset the timer
@@ -160,7 +160,9 @@ def reset_game(time_counter, player_score, stack, user_text, starting_setup):
     # If the game was reset from game 2
     elif menu.game_v2 == True: 
         # Reset the timer
-        time_counter = 7000    
+        time_counter = 8000    
+        # Reset the time decrement
+        permanent_time_decrement = 0
         # Reset the instances count of Stack2
         Stack2.instances_count = 0
     
@@ -180,7 +182,7 @@ def reset_game(time_counter, player_score, stack, user_text, starting_setup):
     # Reset the user input text
     user_text = ""
 
-    return time_counter, player_score, stack, user_text, starting_setup
+    return time_counter, player_score, stack, user_text, starting_setup, permanent_time_decrement
 
 def game_v1(time_counter, user_text, user_input_rectangle, player_score, starting_setup, answered_correctly, high_score, stack, current_question, current_question_answer, question_answered_time):
 
