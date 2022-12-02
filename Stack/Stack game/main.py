@@ -7,6 +7,10 @@ from functions import *
 pygame.init()
 clock = pygame.time.Clock()
 
+# Caption
+pygame.display.set_caption("Stack Game - By LyleW473")
+
+
 # Game variables
 time_counter = 30000 # 30 seconds in milliseconds
 time_counter_2 = 8000 # The time counter for game 2
