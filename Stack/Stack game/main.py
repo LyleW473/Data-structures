@@ -66,7 +66,12 @@ while run:
 
         # Only if we are in the paused menu, should we draw a "faded" timer
         if menu.show_paused_menu == True:
-            draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)   
+            # If we paused the game from the "goal element" game
+            if menu.game_v1 == True:
+                draw_alpha_text(str(round(time_counter / 1000, 2)), time_font, BLACK, 390, 0)   
+            # If we paused the game from the "goal height" game
+            elif menu.game_v2 == True:
+                draw_alpha_text(str(round(time_counter_2 / 1000, 2)), time_font, BLACK, 390, 0)   
 
         # Check if the player has requested to restart the game
         if menu.reset_game == True:

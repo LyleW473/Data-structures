@@ -217,7 +217,7 @@ def game_v1(time_counter, user_text, user_input_rectangle, player_score, startin
             # Set the high score as the player's current score
             high_score = player_score
             # Write the score into a new file 
-            with open("high_score.txt", "w") as high_score_file:
+            with open("high_score_1.txt", "w") as high_score_file:
                 high_score_file.write(str(high_score))
 
         # Drawing the high score onto the screen
