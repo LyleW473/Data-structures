@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 
 # Game variables
 time_counter = 30000 # 30 seconds in milliseconds
-time_counter_2 = 8000 # The time counter for game 2
+time_counter_2 = 7000 # The time counter for game 2
 user_text = "" # Holds the numbers that the user types into the input box 
 user_input_rectangle = pygame.Rect((screen_width / 2) - 100, screen_height - 90, 200, 50) # User input box rectangle
 player_score = 0 # The score the player currently has
@@ -38,7 +38,6 @@ if os.path.exists('high_score_2.txt'):
 else:
     # Set the high score as 0
     high_score_2 = 0
-
 
 
 # Placeholder values for these items 

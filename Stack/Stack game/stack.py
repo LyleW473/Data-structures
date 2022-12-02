@@ -129,9 +129,11 @@ class Stack():
                 pygame.draw.line(screen, BLACK, (480, 225 + (i * (rect_height + 5)) + (rect_height / 2)) , (520, 225 + (i * (rect_height + 5)) + (rect_height / 2)), 3)
         
 class Stack2(Stack):
+    # Class variable to count the number of instances of the stack
+    instances_count = 0 
     def __init__(self, items_list = [] ):
         Stack.__init__(self, items_list) # Stack 2 (for the goal height game) inherits Stack(From the goal element game)
-
+        Stack2.instances_count += 1 # Increment the number of instances
 
     def pop(self):
     
@@ -149,8 +151,6 @@ class Stack2(Stack):
 
             # Increment the player pointer
             self.player_pointer += 1
-
-        print(self.items_list)
 
     def draw(self):
         # Width and height for the stack element rectangles

@@ -3,7 +3,6 @@ from pygame.locals import *
 from Menus import Menu
 from stack import Stack, Stack2
 
-
 # Screen
 screen_width = 1000
 screen_height = 800
@@ -161,7 +160,9 @@ def reset_game(time_counter, player_score, stack, user_text, starting_setup):
     # If the game was reset from game 2
     elif menu.game_v2 == True: 
         # Reset the timer
-        time_counter = 8000    
+        time_counter = 7000    
+        # Reset the instances count of Stack2
+        Stack2.instances_count = 0
     
     # Note: The following are the same for both games, this is subject to change.
     # Allow for the starting setup again
@@ -431,7 +432,6 @@ def game_v2(time_counter_2, user_text, user_input_rectangle, player_score, start
 
     # INGAME
     if menu.in_game == True:
-
         screen.fill(GREY)   
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # TIME
@@ -490,6 +490,40 @@ def game_v2(time_counter_2, user_text, user_input_rectangle, player_score, start
                 menu.in_game = False
                 # Show the restart menu
                 menu.show_restart_menu = True
+
+        # Only do the following if the starting stack has already been spawned
+        if Stack2.instances_count > 0:
+            # Check if the player is already at the height (This is so that the player isn't just sitting there for several seconds whilst already at the height)
+            if threshold_height_tuples[len(stack.items_list) - 2][1] == threshold_height:
+                # Generate a new threshold height that is different from the last key
+                threshold_height = threshold_height_tuples[random.randrange(1,5)][1] 
+                    
+                # In the case that the threshold height is the same as the last height
+                while threshold_height == last_threshold_height:
+        
+                    # Keep generating another random height until they aren't the same
+                    threshold_height = threshold_height_tuples[random.randrange(1,5)][1]
+
+                # Set the last threshold height to be the current threshold height
+                last_threshold_height = threshold_height
+
+
+                # Limit the time decrement to be 2 seconds. This means that the player will have 6 seconds no even after 10 "rounds"
+                if permanent_time_decrement < 2000:
+                    # Increase the time decrement to 0.20 seconds
+                    permanent_time_decrement += 200 # Milliseconds
+                    
+                # Reset the timer and add the permanent time decrement (this is to increase difficulty as time goes on)
+                time_counter_2 = 8000 - permanent_time_decrement
+
+                # Generate a new question 
+                current_question_answer, current_question = ask_question(list_of_words) 
+
+                # Reset the user text
+                user_text = ""
+
+                # Increment the score 
+                player_score += 1
 
         # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         # SCORE
