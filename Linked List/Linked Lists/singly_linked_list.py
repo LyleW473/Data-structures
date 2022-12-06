@@ -223,6 +223,28 @@ class LinkedList:
         # Display the slow pointer node (as this would be the middle item in the linked list)
         print(f"The middle node of the linked list is {slow_pointer.node_val}.")
 
+    def iterative_reverse_ll(self):
+        current_node = self.head_node # Start at the head node
+        prev_node = None # Originally set as 0
+        
+        while True:
+            # Swap the current node's next node and prev node values around
+            current_node.next_node, prev_node = prev_node, current_node.next_node
+
+            # If the next node is None
+            if prev_node == None:
+                # Set the head node as the current node (i.e. the last item in the linked list)
+                self.head_node = current_node
+                # Exit the while loop
+                break
+            
+            # Go to the next node
+            temp = current_node # Use a temp variable to store the current node
+            current_node = prev_node # Set the current node to go to the next node (since prev_node and next_node values were swapped, current_node is set to prev_node)
+            prev_node = temp # The previous node for the next iteration will be the current node from this iteration
+
+        # Output the new state of the linked list
+        print(self.output())
 
 my_linked_list = LinkedList()
 
@@ -259,3 +281,6 @@ testing_list.find_middle_node()
 
 testing_list.insert_new_node(Node(5))
 testing_list.find_middle_node()
+
+testing_list.iterative_reverse_ll() # Testing reverse
+testing_list.iterative_reverse_ll() # Reversing it back to original state
