@@ -71,98 +71,97 @@ class LinkedList:
         return list_of_items
 
     def swap_nodes(self, node1_value, node2_value):
-        # Set the searching node to be the node after the head node (as this would only be accessed if it was proven that node1 / node2 is not the head node)
-        other_node = self.head_node.next_node
 
-        # Check if the values are the same before starting the swapping process
+        # If the nodes are the same, then just exit the function
         if node1_value == node2_value:  
             print("These values are the same.")
             # Exit the function
             return
 
-        # Search for node1 and node1prev
+        # Search for node 1 and the node previous to it
+        prev_node_1 = None
+        current_node = self.head_node
         while True:
-            # If the head node's value is the same as the node 1 value
-            if self.head_node.node_val == node1_value:
-                # Set node 1 to be the same as the head node
-                node1 = self.head_node
-                # This node does not have a previous node
-                node1_prev = None
+            # If the current node's value is the same as the node 1 value
+            if current_node.node_val == node1_value:
+                # Set node 1 as this node
+                node1 = current_node
                 break
-
-            else:
-                # If value of the node after the head node is the same as node 1
-                if other_node.node_val == node1_value:
-                    # Set node 1 as the node after the head node
-                    node1 = other_node
-                    node1_prev = self.head_node
-                    break
-                # Otherwise
-                else:
-                    # Set the previous node as the current node
-                    node1_prev = other_node
-                    # Set the current node to be the next node
-                    other_node = other_node.next_node
-
-        # Search for node2 and node2prev
-        while True:
-            # If the head node's value is the same as the node 1 value
-            if self.head_node.node_val == node2_value:
-                # Set node 2 to be the same as the head node
-                node2 = self.head_node
-                # This node does not have a previous node
-                node2_prev = None
-                break
-            else:
-                # If value of the node after the head node is the same as node2
-                if other_node.node_val == node2_value:
-                    # Set node 2 as the node after the head node
-                    node2 = other_node
-                    node2_prev = self.head_node
-                    break
-                # Otherwise
-                else:
-                    # Set the previous node as the current node
-                    node2_prev = other_node
-                    # Set the current node to be the next node
-                    other_node = other_node.next_node
-
-
-        # SWAPPING THE FIRST TWO ITEMS
-
-        # If node 1 is the first item (This means that node 1 is the head node)
-        if node1_prev == None:
-            # Set the head node as node1
-            self.head_node = node1
-
-
-            # Set node 1 point to the node that node 2 is pointing to. Set node 2 point towards node 1
-            node1.next_node, node2.next_node = node2.next_node, node1
-
-            # Set node 2's previous node to be node 1's previous node (this is None). Set node 1's previous node to be node 2 
-            node2_prev, node1_prev = node1_prev, node2
-
-            # Set the head node to be node 2 
-            self.head_node = node2
-        
-        # If node 2 is the first item (This means that node 2 is the head node)
-        elif node2_prev == None:
-            # Set the head node as node2
-            self.head_node = node2
             
-            # Set node 1 point to the node that node 2 is pointing to. Set node 2 point towards node 1
-            node2.next_node, node1.next_node = node1.next_node, node2
+            # Set the previous node as the current node
+            prev_node_1 = current_node
+            # Go to the next node
+            current_node = current_node.next_node
 
-            # Set node 2's previous node to be node 1's previous node (this is None). Set node 1's previous node to be node 2 
-            node1_prev, node2_prev = node2_prev, node1
 
-            # Set the head node to be node 2 
+        # Do the same for node 2
+        prev_node_2 = None
+        current_node = self.head_node
+
+        while True:
+            # If the current node's value is the same as the node 2 value
+            if current_node.node_val == node2_value:
+                # Set node 2 as this node
+                node2 = current_node
+                break
+            
+            # Set the previous node as the current node
+            prev_node_2 = current_node
+            # Go to the next node
+            current_node = current_node.next_node
+
+        # Swapping:
+
+        # If node 1 is the head node
+        if prev_node_1 == None:
+
+            # Set the previous node 1 to remain the same. Set previous node 2 to point to node 1
+            prev_node_2.next_node = node1   # Same as: prev_node_1, prev_node_2.next_node = None, node1
+
+            # Check if the element they want to swap is the first and last item:
+            if node2.next_node == None: 
+                # Set node 2's previous node to be node 1
+                prev_node_2.next_node = node1
+                # Set node 1's next node to be nothing (last item points to nothing), and set node 2's next node to be node 1
+                node1.next_node, node2.next_node = None, node1.next_node
+
+            # If it isn't, they are swapping the first item with any other item
+            else:
+                # Swap the next node pointers of node 1 and node 2
+                node2.next_node, node1.next_node = node1.next_node, node2.next_node
+
+            # Set the head node as the node 2 
+            self.head_node = node2
+
+        # If node 2 is the head node
+        elif prev_node_2 == None:
+        
+            # Set the previous node 2 to remain the same. Set previous node 1 to point to node 2
+            prev_node_1.next_node = node2   # Same as: prev_node_2, prev_node_1.next_node = None, node2
+
+            # Check if the element they want to swap is the first and last item:
+            if node1.next_node == None: 
+                # Set node 1's previous node to be node 2
+                prev_node_1.next_node = node2
+                # Set node 2's next node to be nothing (last item points to nothing), and set node 1's next node to be node 2
+                node2.next_node, node1.next_node = None, node2.next_node
+
+            # If it isn't, they are swapping the first item with any other item
+            else:
+                # Swap the next node pointers of node 1 and node 2
+                node1.next_node, node2.next_node = node2.next_node, node1.next_node
+
+            # Set the head node as the node 2 
             self.head_node = node1
 
-        
-        # SWAPPING ANY ITEMS
-        # - Add here
 
+        # Swapping between elements other than the first 
+        else:
+            # Swap the next node pointers of the previous nodes
+            prev_node_1.next_node, prev_node_2.next_node = prev_node_2.next_node, prev_node_1.next_node 
+            # Swap the next node pointers of node 1 and node 2
+            node1.next_node, node2.next_node = node2.next_node, node1.next_node
+    
 
 
 my_linked_list = LinkedList()
@@ -183,7 +182,6 @@ new_linked_list = LinkedList()
 for i in range(10):
     new_linked_list.insert_new_node(Node(i))
 
-new_linked_list.swap_nodes(0, 50)
-
+new_linked_list.swap_nodes(2, 50)
 print(new_linked_list.output())
 
