@@ -9,7 +9,8 @@ class DoublyLinkedList:
         self.head_node = None
         self.tail_node = None
 
-    def add_to_head(self, new_head_node):
+    def add_to_head(self, new_node_value):
+        new_head_node = Node(new_node_value)
         old_head_node = self.head_node
 
         # If there already is an existing head node
@@ -34,7 +35,8 @@ class DoublyLinkedList:
         self.output()
         print(f"{new_head_node.node_val} has been added")
         
-    def add_to_tail(self, new_tail_node):
+    def add_to_tail(self, new_node_value):
+        new_tail_node = Node(new_node_value)
         old_tail_node = self.tail_node
 
         # If there already is an existing tail node
@@ -174,12 +176,12 @@ class DoublyLinkedList:
 
 
 my_dll = DoublyLinkedList()
-my_dll.add_to_head(Node(97))
-my_dll.add_to_head(Node(58))
-my_dll.add_to_head(Node(32))
-my_dll.add_to_head(Node(100))
-my_dll.add_to_head(Node(23))
-my_dll.add_to_tail(Node(62))
+my_dll.add_to_head(97)
+my_dll.add_to_head(58)
+my_dll.add_to_head(32)
+my_dll.add_to_head(100)
+my_dll.add_to_head(23)
+my_dll.add_to_tail(62)
 my_dll.remove_node(62)
 my_dll.remove_node(23)
 my_dll.remove_node(32)
