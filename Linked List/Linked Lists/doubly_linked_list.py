@@ -104,15 +104,15 @@ class DoublyLinkedList:
             # Return nothing
             return None
 
-        # If the node to remove is the tail 
+        # If the node to remove is the tail node
         elif node_to_remove == self.tail_node:
             print("remove_tail")
             #self.remove_tail()
             
-        
+        # If the node to remove is the head node
         elif node_to_remove == self.head_node:
-            print("remove head")
-            #self.remove_head()
+            # Call the remove_head method
+            self.remove_head()
 
         # Otherwise if the node to remove is in between the head node and the tail node 
         else:
@@ -125,7 +125,19 @@ class DoublyLinkedList:
         # Output the current state of the list
         self.output()
 
-            
+    def remove_head(self):
+        # Set the new head node to be node after the current (old) head node
+        new_head_node = self.head_node.next_node
+
+        # Set the previous node of the new head node to be nothing
+        new_head_node.prev_node = None
+
+        # Set the head node to be the new head node
+        self.head_node = new_head_node
+
+        # Display the message that the old head node has been removed
+        print(f"{self.head_node.node_val} is now the new head node")
+
     def output(self):
         current_node = self.head_node # Node used to iterate through the DLL
         list_of_items = [] # List to hold the values of all the nodes in the DLL
@@ -150,4 +162,5 @@ my_dll.output()
 my_dll.add_to_tail(Node(62))
 my_dll.output()
 
-my_dll.remove_node(97)
+
+my_dll.remove_node(23)
