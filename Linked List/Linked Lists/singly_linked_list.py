@@ -163,6 +163,49 @@ class LinkedList:
             node1.next_node, node2.next_node = node2.next_node, node1.next_node
     
 
+    def nth_last_node(self, n):
+        current_node = None # Current node will be None until count is n
+        tail_node = self.head_node # Set the tail node to be the first node
+        count = 0 # Count should be 0 and will track how far we are in the linked list
+
+        # Check that the user inputted an integer for the value n
+        if type(n) != int:
+            print(f"Please enter an integer for n, not a {type(n)}.")
+            # Exit the function 
+            return
+
+        # Check that the user didn't input a negative value for n or the value 0
+        if n <= 0:
+            print(f"Cannot find the nth last node of value {n}, please enter a positive value of n.")
+            # Exit the function
+            return
+
+        # While the tail node is not None (meaning that we haven't reached the end of the linked list)
+        while tail_node != None:
+            # Go to the next node
+            tail_node = tail_node.next_node
+
+            # Increment count
+            count += 1
+
+            # Create the current node if count is the same as n
+            if count == n:
+                # Set the current node as the head node (The first node in the linked list)
+                current_node = self.head_node
+
+            # Once the current node has been created, we are now iterating through the list with the current node.
+            elif count > n:
+                current_node = current_node.next_node
+
+        # Check that the user didn't input e.g. 12th last item in the linked list, when there are only 11 items in the list
+        if n > count:
+            print(f"Value for n exceeds the number of items inside the linked list, please input a smaller integer.")
+        # Otherwise
+        else:
+            print(current_node.node_val)
+            # Return the current node(The nth last node)
+            return current_node
+
 
 my_linked_list = LinkedList()
 
@@ -184,4 +227,7 @@ for i in range(10):
 
 new_linked_list.swap_nodes(2, 50)
 print(new_linked_list.output())
+
+print("-----------------------------------------------------------------------------------------------------")
+new_linked_list.nth_last_node(0)
 
