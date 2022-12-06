@@ -29,6 +29,10 @@ class DoublyLinkedList:
             self.head_node = new_head_node
             # The new node will also be the new tail node (if there was nothing before)
             self.tail_node = new_head_node
+
+        # Output the current state of the DLL
+        self.output()
+        print(f"{new_head_node.node_val} has been added")
         
     def add_to_tail(self, new_tail_node):
         old_tail_node = self.tail_node
@@ -50,6 +54,10 @@ class DoublyLinkedList:
             self.tail_node = new_tail_node
             # The new node will also be the new head node (if there was nothing before)
             self.head_node = new_tail_node
+
+        # Output the current state of the DLL
+        self.output()
+        print(f"{new_tail_node.node_val} has been added")
 
     def remove_node(self, node_value_to_remove):
         start_current_node = self.head_node # Tracks the current node we are from the start of the list
@@ -106,8 +114,8 @@ class DoublyLinkedList:
 
         # If the node to remove is the tail node
         elif node_to_remove == self.tail_node:
-            print("remove_tail")
-            #self.remove_tail()
+            # Call the remove_tail method
+            self.remove_tail()
             
         # If the node to remove is the head node
         elif node_to_remove == self.head_node:
@@ -138,6 +146,19 @@ class DoublyLinkedList:
         # Display the message that the old head node has been removed
         print(f"{self.head_node.node_val} is now the new head node")
 
+    def remove_tail(self):
+        # Set the new tail node to be node before the current (old) tail node
+        new_tail_node = self.tail_node.prev_node
+
+        # Set the next node of the new tail node to be nothing
+        new_tail_node.next_node = None
+
+        # Set the tail node to be the new tail node
+        self.tail_node = new_tail_node
+
+        # Display the message that the old tail node has been removed
+        print(f"{self.tail_node.node_val} is now the new tail node")    
+
     def output(self):
         current_node = self.head_node # Node used to iterate through the DLL
         list_of_items = [] # List to hold the values of all the nodes in the DLL
@@ -158,9 +179,7 @@ my_dll.add_to_head(Node(58))
 my_dll.add_to_head(Node(32))
 my_dll.add_to_head(Node(100))
 my_dll.add_to_head(Node(23))
-my_dll.output()
 my_dll.add_to_tail(Node(62))
-my_dll.output()
-
-
+my_dll.remove_node(62)
 my_dll.remove_node(23)
+my_dll.remove_node(32)
