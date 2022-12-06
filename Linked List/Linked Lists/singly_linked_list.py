@@ -13,7 +13,6 @@ class LinkedList:
         # Set the new node as the current new head node
         self.head_node = new_node
 
-    
     def insert_new_node(self, new_node):
         # Set the current node as the head node
         current_node = self.head_node
@@ -28,7 +27,6 @@ class LinkedList:
             current_node = current_node.next_node
 
         print(f"{self.output()}, {new_node.node_val} has been added")
-
 
     def remove_node(self, value_to_remove):
         # Set the current node as the head node
@@ -49,7 +47,6 @@ class LinkedList:
                 
                 # Go to the next node
                 current_node = current_node.next_node
-
 
     def output(self):
         # Set the current node as the head node
@@ -162,7 +159,6 @@ class LinkedList:
             # Swap the next node pointers of node 1 and node 2
             node1.next_node, node2.next_node = node2.next_node, node1.next_node
     
-
     def nth_last_node(self, n):
         current_node = None # Current node will be None until count is n
         tail_node = self.head_node # Set the tail node to be the first node
@@ -206,6 +202,27 @@ class LinkedList:
             # Return the current node(The nth last node)
             return current_node
 
+    def find_middle_node(self):
+        # Implemented using fast/slow pointers
+        fast_pointer = self.head_node # The pointer that will travel twice as fast as the slow pointer
+        slow_pointer = self.head_node # Travels at normal speed
+
+        # While the fast pointer is not equal to None
+        while fast_pointer != None:
+            # If the fast pointer's next node is None (this means that we have reached the final item, as the final item's next node attribute should point to None )
+            if fast_pointer.next_node == None:
+                # Exit the while loop
+                break
+            
+            # Go 2 nodes forward
+            fast_pointer = fast_pointer.next_node.next_node
+            # Go to the next node
+            slow_pointer = slow_pointer.next_node
+
+        
+        # Display the slow pointer node (as this would be the middle item in the linked list)
+        print(f"The middle node of the linked list is {slow_pointer.node_val}.")
+
 
 my_linked_list = LinkedList()
 
@@ -228,6 +245,17 @@ for i in range(10):
 new_linked_list.swap_nodes(2, 50)
 print(new_linked_list.output())
 
-print("-----------------------------------------------------------------------------------------------------")
+print("----------------------------")
 new_linked_list.nth_last_node(0)
 
+print("----------------------------")
+new_linked_list.find_middle_node()
+
+print("-----------------------------------------------------------------------------------------------------")
+testing_list = LinkedList()
+for i in range(0, 10, 2):
+    testing_list.insert_new_node(Node(i))
+testing_list.find_middle_node()
+
+testing_list.insert_new_node(Node(5))
+testing_list.find_middle_node()
