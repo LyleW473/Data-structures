@@ -5,8 +5,9 @@ class Node:
 
 class Stack:
     def __init__(self, max_size = 10):
-        self.max_size = max_size
-        self.top_item = None
+        self.max_size = max_size # Declares the maximum size of the stack
+        self.top_item = None # There is no top item if the stack is empty
+        self.size = 0 # Stack starts with 0 items
 
     def push(self):
         pass
@@ -18,11 +19,14 @@ class Stack:
         pass
 
     def isFull(self):
-        pass
+        return self.size == self.max_size
 
     def isEmpty(self):
-        pass
+        return self.size == 0
 
     def output(self):
         pass
 
+myStack = Stack()
+print(myStack.isEmpty())
+print(myStack.isFull())
