@@ -36,11 +36,46 @@ class Queue:
 
         # Otherwise, if the queue is full
         else:
-            print("Cannot enqueue to a full list")
+            print("Cannot enqueue to a full queue!")
 
 
     def dequeue(self):
-        pass
+        # If the queue is empty
+        if self.isEmpty() == True:
+            print("Cannot dequeue from an empty queue!")
+        
+        # If the queue isn't empty 
+        else:
+            # Start from the beginning of the queue
+            current_node = self.head
+
+            # While we haven't reached the rear of the queue
+            while current_node != self.rear:
+                # Set the previous node as the current node
+                prev_node = current_node
+                # Go to the next node
+                current_node = current_node.next_node
+
+            # If the item we want to dequeue is the only item in the queue
+            if current_node == self.head and current_node == self.rear:
+                # Set the head and rear of the queue to be None
+                self.head = None
+                self.rear = None
+
+            # If this is any other item
+            else:
+                # Set the next node of previous node of the old rear node to be None
+                prev_node.next_node = None
+                # Set the rear node to be the previous node
+                self.rear = prev_node
+        
+            # Decrement the size of the queue
+            self.size -= 1
+
+            # Print all of the items in the queue, and what item was removed
+            self.output()
+            print(f"{current_node.node_val} has been removed from the queue!")
+
 
     def peek(self):
         pass
@@ -57,7 +92,7 @@ class Queue:
         # If the queue has no declared max size
         if self.max_size == None:
             return False
-        # Elif the size of the list is equal to the max size
+        # Elif the size of the queue is equal to the max size
         elif self.size == self.max_size:
             return True
         # Otherwise
@@ -87,3 +122,7 @@ myQueue.enqueue("hello")
 myQueue.enqueue(23)
 myQueue.enqueue("world")
 myQueue.enqueue(53)
+myQueue.dequeue()
+myQueue.dequeue()
+myQueue.dequeue()
+myQueue.dequeue()
