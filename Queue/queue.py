@@ -38,7 +38,6 @@ class Queue:
         else:
             print("Cannot enqueue to a full queue!")
 
-
     def dequeue(self):
         # If the queue is empty
         if self.isEmpty() == True:
@@ -76,9 +75,14 @@ class Queue:
             self.output()
             print(f"{current_node.node_val} has been removed from the queue!")
 
-
     def peek(self):
-        pass
+        # If the queue is empty
+        if self.isEmpty() == True:
+            return "Cannot look at the first item in the queue when the queue is empty!"
+        # Otherwise
+        else:
+            # Return the value of the first item in the queue
+            return self.head.node_val
 
     def isEmpty(self):
         # If the queue has no items
@@ -122,7 +126,14 @@ myQueue.enqueue("hello")
 myQueue.enqueue(23)
 myQueue.enqueue("world")
 myQueue.enqueue(53)
+print(f"The first item in myQueue is {myQueue.peek()}")
 myQueue.dequeue()
 myQueue.dequeue()
 myQueue.dequeue()
 myQueue.dequeue()
+myQueue.enqueue(97)
+myQueue.enqueue("!")
+print(f"The first item in myQueue is {myQueue.peek()}")
+myQueue.dequeue()
+myQueue.dequeue()
+print(myQueue.peek())
