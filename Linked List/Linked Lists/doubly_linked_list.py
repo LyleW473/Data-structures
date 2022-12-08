@@ -174,6 +174,22 @@ class DoublyLinkedList:
 
         print(list_of_items)
 
+    def iterative_reverse_dll(self):
+        current_node = self.head_node # Start at the first node in the DLL
+
+        while current_node: # Same as "while current_node != None"
+
+            # Switch the values of the previous and next nodes of the current node
+            current_node.prev_node, current_node.next_node = current_node.next_node, current_node.prev_node
+            
+            # Go to the next node (since prev and next node have swapped, prev_node goes to the next node)
+            current_node = current_node.prev_node
+        
+        # Once current node is None, we have reached the end of the DLL, so swap the head and tail nodes
+        self.head_node, self.tail_node = self.tail_node, self.head_node
+
+
+        self.output()
 
 my_dll = DoublyLinkedList()
 my_dll.add_to_head(97)
@@ -182,6 +198,7 @@ my_dll.add_to_head(32)
 my_dll.add_to_head(100)
 my_dll.add_to_head(23)
 my_dll.add_to_tail(62)
-my_dll.remove_node(62)
-my_dll.remove_node(23)
-my_dll.remove_node(32)
+# my_dll.remove_node(62)
+# my_dll.remove_node(23)
+# my_dll.remove_node(32)
+my_dll.iterative_reverse_dll()
