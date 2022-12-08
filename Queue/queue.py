@@ -9,8 +9,13 @@ class Queue:
         self.rear = None # Initially has no value as there are no items in the queue
         self.max_size = max_size
 
-    def enqueue(self):
-        pass
+    def enqueue(self, new_item):
+        # If the queue has no declared max size, or the size of the queue is not max_size.
+        if self.isFull() == False:
+            pass
+        # Otherwise, if the queue is full
+        else:
+            print("Cannot enqueue to a full list")
 
     def dequeue(self):
         pass
@@ -20,7 +25,18 @@ class Queue:
 
     def isEmpty(self):
         # If the queue has no items
-        if self.size() == 0:
+        if self.size == 0:
+            return True
+        # Otherwise
+        else:
+            return False
+
+    def isFull(self):
+        # If the queue has no declared max size
+        if self.max_size == None:
+            return False
+        # Elif the size of the list is equal to the max size
+        elif self.size == self.max_size:
             return True
         # Otherwise
         else:
@@ -31,3 +47,5 @@ class Queue:
         return self.size
 
 
+myQueue = Queue()
+myQueue.enqueue("hehre")
