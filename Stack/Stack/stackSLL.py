@@ -34,12 +34,30 @@ class Stack:
         elif (self.isEmpty() == False and self.isFull() == True):
             print("Cannot push items onto a full stack!")
         
-
     def pop(self):
-        pass
+        # If the stack is empty
+        if self.isEmpty() == True:
+            print("Cannot pop items when the stack is empty!")
+        # Otherwise
+        else:
+            # Create a new temp variable with the value of the old top item
+            new_top_item = self.top_item
+            # Set the new top item to be at the top of the stack
+            self.top_item = new_top_item.next_node
+            # Decrement the size of the stack
+            self.size -= 1
+            # Output all of the items inside of the stack
+            self.output()
+            print(f"{new_top_item.node_val} has been popped off the stack!")
 
     def peek(self):
-        pass
+        # If the stack isn't empty
+        if self.isEmpty() == False:
+            # Return the value of the top item in the stack
+            return f"The top item is {self.top_item.node_val}!"
+        else:
+            # Return a statement saying that the stack is empty
+            return "The stack is empty, there is no top item!"
 
     def isFull(self):
         return self.size == self.max_size
@@ -61,8 +79,16 @@ class Stack:
         print(output_list)
 
 myStack = Stack()
+print(myStack.peek())
+
 print(myStack.isEmpty())
 print(myStack.isFull())
 
 for i in range(1, 12):
     myStack.push(i)
+
+print(myStack.peek())
+
+for i in range(0,11):
+    myStack.pop()
+
