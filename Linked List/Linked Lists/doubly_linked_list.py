@@ -191,6 +191,27 @@ class DoublyLinkedList:
 
         self.output()
 
+    def recursive_reverse_dll(self, current_node = None):
+        # Base case = if the current node is the tail node
+        if current_node == self.tail_node:
+            # Switch the head nodes and tail nodes
+            self.head_node, self.tail_node = self.tail_node, self.head_node
+            # Make the final switch between the current node's next node and previous node
+            current_node.prev_node, current_node.next_node = current_node.next_node, current_node.prev_node
+            # Output the state of the DLL
+            self.output()
+        # Otherwise
+        else:
+            # If the current node is nothing
+            if current_node == None:
+                # Set the current node as the head (we will start from the beginning of the DLL to the end)
+                current_node = self.head_node
+
+            # Switch the previous and next node pointers of the current node
+            current_node.prev_node, current_node.next_node = current_node.next_node, current_node.prev_node
+            # Make a recursive call, going to the next node (prev_node --> next node because they were switched)
+            current_node = self.recursive_reverse_dll(current_node.prev_node)
+
 my_dll = DoublyLinkedList()
 my_dll.add_to_head(97)
 my_dll.add_to_head(58)
@@ -202,3 +223,4 @@ my_dll.add_to_tail(62)
 # my_dll.remove_node(23)
 # my_dll.remove_node(32)
 my_dll.iterative_reverse_dll()
+my_dll.recursive_reverse_dll()
