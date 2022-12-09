@@ -163,6 +163,62 @@ class DoublyLinkedList:
         # Display the message that the old tail node has been removed
         print(f"{self.tail_node.node_val} is now the new tail node")    
 
+    def find_node(self, node_value_to_find):
+        start_current_node = self.head_node # Tracks the current node we are from the start of the list
+        rear_current_node = self.tail_node # Tracks the current node we are from the end of the list
+        node_to_find = None # Will be set to the current node to when found
+
+        # If the value of the current node at the start of the list is the same as the value of the node we want to find
+        if start_current_node.node_val[0] == node_value_to_find:
+            # Set the node to remove as the head node
+            node_to_find = self.head_node
+
+        # If the value of the current node at the rear of the list is the same as the value of the node we want to find
+        if rear_current_node.node_val[0] == node_value_to_find:
+            # Set the node to  as the tail node
+            node_to_find = self.tail_node
+
+        # Move the current nodes inwards (As they cannot be the head node or tail node)
+        start_current_node = start_current_node.next_node
+        rear_current_node = rear_current_node.prev_node
+        
+        # While we haven't found the node
+        while node_to_find == None:
+
+            # If the rear current node has reached the start of the list and the start current node reached the end of the list
+            if rear_current_node == self.head_node and start_current_node == self.tail_node:
+                print("End of list reached, node not found!")
+                break
+            
+            # Check if the value of the start current node is the same as the value of the node we want to find
+            if start_current_node.node_val[0] == node_value_to_find:
+                # Set the node to find to be the current node
+                node_to_find = start_current_node
+
+            # Check if the value of the rear current node is the same as the value of the node we want to find
+            if rear_current_node.node_val[0] == node_value_to_find:
+                # Set the node to find to be the current node
+                node_to_find = rear_current_node
+
+            # Increment the start current node (moves inwards towards the rear node)
+            start_current_node = start_current_node.next_node
+            # Decrement the start current node (moves inwards towards the head node)
+            rear_current_node = rear_current_node.prev_node
+
+        # ----------------------------------------------------------------------------------
+        # RETURNING THE VALUES
+
+        # In the case that the node was not found inside the DLL
+        if node_to_find == None:
+            # Return None
+            return None
+            
+        # If the node has been found
+        else: 
+            # Return the node's value
+            print(f"Found the node, returning value: {node_to_find.node_val[1]}")
+            return node_to_find.node_val[1]
+
     def output(self):
 
         current_node = self.head_node # Node used to iterate through the DLL
@@ -181,7 +237,7 @@ class HashMapDLL(HashMap):
     def __init__(self, array_size):
         super().__init__(array_size)
 
-        
+
     def save(self, key, value):
         # Generate a hash code
         hash_code = self.hash(key)
@@ -220,12 +276,40 @@ class HashMapDLL(HashMap):
                 # Add the current key:value pair to the end of the linked list
                 self.arrays[array_index][0].add_to_tail([key,value])
             
+    def retrieve(self, key):
+        # Generate a hash code
+        hash_code = self.hash(key)
+        # Find the array index using the compressor
+        array_index = self.compressor(hash_code)
+
+        # If the array in the arrays is empty
+        if self.arrays[array_index] == None:
+            print("There is no value here.")
+
+        # If the key in the array at the array index has the same key
+        elif self.arrays[array_index][0] == key:
+            print(f"Returning value: {self.arrays[array_index][1]}")
+            return self.arrays[array_index][1]
+
+        # If the key in the array does not have the same key, 
+        elif self.arrays[array_index][0] != key:
+            # If there is a doubly linked list at this array index
+            if type(self.arrays[array_index][0]) == DoublyLinkedList:
+                # Search the doubly linked list for the value
+                return_value = self.arrays[array_index][0].find_node(key)
+
+                # If the value returned was None, this means that it wasn't in this DLL. This could mean that the DLL was full and so the key:value pair was saved somewhere else.
+                if return_value == None:
+                    print("Not inside the DLL, so has been moved elsewhere")
+                    # Add linear probing collision checking here
+                    
+
 
             
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
 
-my_hash_map_dll = HashMapDLL(5)
+my_hash_map_dll = HashMapDLL(2)
 print(my_hash_map_dll.arrays)
 
 my_hash_map_dll.retrieve("Hello")
@@ -233,3 +317,6 @@ my_hash_map_dll.save("Hello", "World")
 my_hash_map_dll.save("Hello", "test")
 my_hash_map_dll.save("Gsdau", "purple")
 my_hash_map_dll.save("Zebra", "wheat")
+my_hash_map_dll.retrieve("Zebra")
+my_hash_map_dll.retrieve("Hello")
+my_hash_map_dll.retrieve("Bob")
