@@ -7,61 +7,84 @@ class Node:
         self.prev_node = prev_node
 
 class DoublyLinkedList:
-    def __init__(self):
+    def __init__(self, max_size = None):
         self.head_node = None
         self.tail_node = None
+        self.size = 0
+        self.max_size = max_size
 
     def add_to_head(self, new_node_value):
         new_head_node = Node(new_node_value)
         old_head_node = self.head_node
 
-        # If there already is an existing head node
-        if self.head_node != None:
-            # Set the new head node's next node to be the old head node
-            new_head_node.next_node = old_head_node
-            # Set the new head node's prev node to be None
-            new_head_node.prev_node = None   
-            # Set the old head node's prev node to be the new head node
-            old_head_node.prev_node = new_head_node
-            # Set the head node to be the new head 
-            self.head_node = new_head_node
+        # If the size of the DLL hasn't reached the max size
+        if self.size != self.max_size:
 
-        # If there is no head node
-        if self.head_node == None:
-            # Set the node passed into the function as the new head node
-            self.head_node = new_head_node
-            # The new node will also be the new tail node (if there was nothing before)
-            self.tail_node = new_head_node
+            # If there already is an existing head node
+            if self.head_node != None:
+                # Set the new head node's next node to be the old head node
+                new_head_node.next_node = old_head_node
+                # Set the new head node's prev node to be None
+                new_head_node.prev_node = None   
+                # Set the old head node's prev node to be the new head node
+                old_head_node.prev_node = new_head_node
+                # Set the head node to be the new head 
+                self.head_node = new_head_node
 
-        # Output the current state of the DLL
-        self.output()
-        print(f"{new_head_node.node_val} has been added")
+            # If there is no head node
+            if self.head_node == None:
+                # Set the node passed into the function as the new head node
+                self.head_node = new_head_node
+                # The new node will also be the new tail node (if there was nothing before)
+                self.tail_node = new_head_node
+
+            # Increment the size of the DLL
+            self.size += 1
+
+            # Output the current state of the DLL
+            self.output()
+            print(f"{new_head_node.node_val} has been added")
         
+        # Otherwise
+        else:
+            print("DLL is full!")
+
     def add_to_tail(self, new_node_value):
         new_tail_node = Node(new_node_value)
         old_tail_node = self.tail_node
 
-        # If there already is an existing tail node
-        if self.tail_node != None:
-            # Set the new tail's next node to be Nothing
-            new_tail_node.next_node = None
-            # Set the new tail's previous node to be the old tail node
-            new_tail_node.prev_node = old_tail_node
-            # Set the old tail node's next node to be the new tail
-            old_tail_node.next_node = new_tail_node
-            # Set the new tail node to be the tail node
-            self.tail_node = new_tail_node
+        # If the size of the DLL hasn't reached the max size
+        if self.size != self.max_size:
+            # If there already is an existing tail node
+            if self.tail_node != None:
+                # Set the new tail's next node to be Nothing
+                new_tail_node.next_node = None
+                # Set the new tail's previous node to be the old tail node
+                new_tail_node.prev_node = old_tail_node
+                # Set the old tail node's next node to be the new tail
+                old_tail_node.next_node = new_tail_node
+                # Set the new tail node to be the tail node
+                self.tail_node = new_tail_node
 
-        # If there is no tail node and head node
-        if self.tail_node == None and self.head_node == None:
-            # Set the node passed into the function as the new tail node
-            self.tail_node = new_tail_node
-            # The new node will also be the new head node (if there was nothing before)
-            self.head_node = new_tail_node
+            # If there is no tail node and head node
+            if self.tail_node == None and self.head_node == None:
+                # Set the node passed into the function as the new tail node
+                self.tail_node = new_tail_node
+                # The new node will also be the new head node (if there was nothing before)
+                self.head_node = new_tail_node
 
-        # Output the current state of the DLL
-        self.output()
-        print(f"{new_tail_node.node_val} has been added")
+            # Increment the size of the DLL
+            self.size += 1
+            
+            # Output the current state of the DLL
+            self.output()
+            print(f"{new_tail_node.node_val} has been added")
+            return "successful"
+
+        # Otherwise
+        else:
+            print("DLL is full!")
+            return "unsuccessful"
 
     def remove_node(self, node_value_to_remove):
         start_current_node = self.head_node # Tracks the current node we are from the start of the list
@@ -237,7 +260,6 @@ class HashMapDLL(HashMap):
     def __init__(self, array_size):
         super().__init__(array_size)
 
-
     def save(self, key, value):
         # Generate a hash code
         hash_code = self.hash(key)
@@ -249,7 +271,7 @@ class HashMapDLL(HashMap):
         if self.arrays[array_index] == None:
             # Save the key and value at the array at the index
             self.arrays[array_index] = [key, value]
-            print(f"Value, {self.arrays[array_index][1]} has been saved to {array_index}.")
+            print(f"The value, {self.arrays[array_index][1]} has been saved to {array_index}.")
 
         # If the key in the array at the array index has the same key   
         elif self.arrays[array_index][0] == key:
@@ -263,7 +285,7 @@ class HashMapDLL(HashMap):
             if type(self.arrays[array_index][0]) != DoublyLinkedList:
                 print("Not the same key, create a doubly linked list")
                 # Create a doubly linked list
-                array_dll = DoublyLinkedList()
+                array_dll = DoublyLinkedList(max_size = 2)
                 # Set the head node as the existing key:value pair
                 array_dll.add_to_head(self.arrays[array_index])
                 # Add the current key:value pair to the end of the linked list
@@ -274,7 +296,62 @@ class HashMapDLL(HashMap):
             # If there is already a doubly linked list in the array at the array index
             else:
                 # Add the current key:value pair to the end of the linked list
-                self.arrays[array_index][0].add_to_tail([key,value])
+                return_value = self.arrays[array_index][0].add_to_tail([key,value])
+
+                # In the case that the DLL at the array index was full, 
+                if return_value == "unsuccessful":
+                    # Add linear probing collision checking here
+                    print("Look for another array index")
+
+                    # Collision resolving
+                    start_decrementing = False  
+                    original_array_index = array_index
+
+                    # While we haven't found an empty space
+                    while self.arrays[array_index] != None:
+
+                        # INCREMENTING / DECREMENTING
+
+                        # If the array index is the same as the array size, don't increment the array index
+                        if array_index + 1 == self.array_size:
+                            # Start decrementing the array index
+                            start_decrementing = True
+                            # Set the array index to start from the item to the left of the item in the original array index
+                            array_index = original_array_index - 1
+                            continue
+                        
+                        # Otherwise
+                        else:
+                            # If we have reached the end of the hash map and have started decrementing
+                            if start_decrementing == True:
+                                # Decrement the array index
+                                array_index -= 1
+
+                                # If the array index goes below 0, it means we have searched the entire hash map without finding an empty space
+                                if array_index < 0:
+                                    print("No more space inside the hash map.")
+                                    break
+                            # If we haven't reached the end of the hash map
+                            else:
+                                # Increment the array index
+                                array_index += 1
+
+                        # CHECKING ITEM AT INDEX
+
+                        if self.arrays[array_index] == None:
+                            # Save the key and value at the array at the index
+                            self.arrays[array_index] = [key, value]
+                            print(f"The value, {value} has been saved to {array_index}.")
+                            break
+
+                        # If the key in the array at the array index has the same key   
+                        elif self.arrays[array_index][0] == key:
+                            # Replace the value at the array index with the new value
+                            self.arrays[array_index][1] = value
+                            print(f"The new value, {value} has been saved to {array_index}")
+                            break
+                
+
             
     def retrieve(self, key):
         # Generate a hash code
@@ -302,6 +379,12 @@ class HashMapDLL(HashMap):
                 if return_value == None:
                     print("Not inside the DLL, so has been moved elsewhere")
                     # Add linear probing collision checking here
+
+                # If the value was correct
+                else:
+                    return return_value
+
+
                     
 
 
@@ -309,14 +392,18 @@ class HashMapDLL(HashMap):
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
 
-my_hash_map_dll = HashMapDLL(2)
+my_hash_map_dll = HashMapDLL(3)
 print(my_hash_map_dll.arrays)
 
-my_hash_map_dll.retrieve("Hello")
+# my_hash_map_dll.retrieve("Hello")
 my_hash_map_dll.save("Hello", "World")
-my_hash_map_dll.save("Hello", "test")
+# my_hash_map_dll.save("Hello", "test")
 my_hash_map_dll.save("Gsdau", "purple")
+my_hash_map_dll.save("Adobe", "Company")
 my_hash_map_dll.save("Zebra", "wheat")
-my_hash_map_dll.retrieve("Zebra")
-my_hash_map_dll.retrieve("Hello")
-my_hash_map_dll.retrieve("Bob")
+my_hash_map_dll.save("Pet", "builder")
+my_hash_map_dll.save("Rat", "plague")
+my_hash_map_dll.save("Peter", "Amazing")
+# my_hash_map_dll.retrieve("Zebra")
+# my_hash_map_dll.retrieve("Hello")
+# my_hash_map_dll.retrieve("Bob")
