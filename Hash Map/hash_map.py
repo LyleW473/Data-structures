@@ -12,8 +12,6 @@ class HashMap:
         return hash_code % self.array_size
     
     def save(self, key, value):
-        print(self.arrays)
-        
         # Generate a hash code
         hash_code = self.hash(key)
         # Find an array index using the compressor
@@ -54,7 +52,7 @@ class HashMap:
 
                     # If the array index isn't less than 0
                     else:
-                        print("entered decrement")
+                        # Decrement the array index
                         array_index -= 1  
         
                         # If the array at the index is empty
@@ -78,7 +76,6 @@ class HashMap:
                 if array_index + 1 < self.array_size and start_decrementing == False:
                     # Increment the array index
                     array_index += 1
-                    print("here", array_index)
 
                     # If the array at the index is empty
                     if self.arrays[array_index] == None:
@@ -99,9 +96,8 @@ class HashMap:
 
                 # If we have reached the end of the array
                 elif array_index + 1 >= self.array_size:
-                    print("Cannot go this way anymore")
-                    start_decrementing = True
-                    print("Start decrementing")                    
+                    print("Cannot go this way anymore, start decrementing.")
+                    start_decrementing = True           
                     # Set the array index to start from the left item of the original index again, this is so that we don't start decrementing from the end of the array. 
                     # Note: The possibility that there is a space at original_array_index has been eliminated, so start from the item to the left of the original index.
                     array_index = original_array_index - 1
@@ -109,8 +105,6 @@ class HashMap:
                 
             # Print all the arrays in the hash map
             print(self.arrays)
-
-
 
     def retrieve(self, key):
         # Generate a hash code
@@ -120,22 +114,68 @@ class HashMap:
 
         # If the array in the arrays is empty
         if self.arrays[array_index] == None:
-            print("Nothing here")
+            print("There is no value here.")
 
         # If the key in the array at the array index has the same key
         elif self.arrays[array_index][0] == key:
-            print("Returning value", self.arrays[array_index][1])
+            print(f"Returning value: {self.arrays[array_index][1]}")
             return self.arrays[array_index][1]
 
         # If the key in the array does not have the same key, 
         elif self.arrays[array_index][0] != key:
             print("Not the same key, go to another index")
-            # Add collision handling 
+        
+            # Collision handling    
+            start_decrementing = False
+            original_array_index = array_index # Saves the original array index so that if we check all the spaces to the right of the original array index, we want to go to the left starting from the original spot again
+            # While the array at the index is not the key
+            while self.arrays[array_index][0] != key:
+                print(f"Array index = {array_index}")
+
+                # Check if we have reached the final index of the array without finding an empty spot and have started decrementing
+                if start_decrementing == True:  
+
+                    # If array_index is less than 0, it means that we have checked all indexes to the left and right of the original array index.
+                    if array_index < 0:
+                        print("This item you are looking for is not in the hash map.")
+                        break
+
+                    # If the array index isn't less than 0
+                    else:
+                        # Decrement the array index
+                        array_index -= 1  
+
+                        # If the key in the array at the array index is the same as the key passed in
+                        if self.arrays[array_index][0] == key:
+                            # Return the value in that array
+                            print(f"Returning value: {self.arrays[array_index][1]}")
+                            return self.arrays[array_index][1]
+
+                # If the array index + 1 is less than the array size (maximum index would be the array_size - 1) and we aren't decrementing yet
+                # Note: It is array_index + 1 because if the max size was 5, we would want to check if array_index + 1 < 5 before incrementing array_index.
+                if array_index + 1 < self.array_size and start_decrementing == False:
+                    # Increment the array index
+                    array_index += 1
+
+                    # If the key in the array at the array index is the same as the key passed in
+                    if self.arrays[array_index][0] == key:
+                        # Return the value in that array
+                        print(f"Returning value: {self.arrays[array_index][1]}")
+                        return self.arrays[array_index][1]
+                    
+                # If we have reached the end of the array
+                elif array_index + 1 >= self.array_size:
+                    print("Cannot go this way anymore, start decrementing.")
+                    start_decrementing = True           
+                    # Set the array index to start from the left item of the original index again, this is so that we don't start decrementing from the end of the array. 
+                    # Note: The possibility that there is a space at original_array_index has been eliminated, so start from the item to the left of the original index.
+                    array_index = original_array_index - 1
+                    continue
 
 
 my_hash_map = HashMap(5)   
+my_hash_map.retrieve("Hello")
 my_hash_map.save("Hello", "World")
-
 my_hash_map.save("Hello", "test")
 print("------------------------------")
 my_hash_map.save("Goodk", "sd")
@@ -145,7 +185,10 @@ my_hash_map.save("Bread", "food")
 my_hash_map.save("Noodles", "soup")
 my_hash_map.save("Bond", "blue")
 my_hash_map.save("Rice", "five")
-my_hash_map.save("Fries", "restaurant")
+my_hash_map.save("French fries", "restaurant")
 
-# my_hash_map.retrieve("Hello")
-# my_hash_map.retrieve("Lyle")
+print("------------------------------")
+my_hash_map.retrieve("Hello")
+my_hash_map.retrieve("Lyle")
+my_hash_map.retrieve("Noodles")
+my_hash_map.retrieve("Puppy")
