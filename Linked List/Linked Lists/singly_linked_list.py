@@ -246,6 +246,34 @@ class LinkedList:
         # Output the new state of the linked list
         print(self.output())
 
+    def recursive_reverse_ll(self, current_node = None, prev_node = None):
+
+        # If the current node isn't None, and the next node is None
+        if current_node != None and prev_node == None:
+            # Set the head node as the last item in the linked list
+            self.head_node = current_node
+            # Output the new reversed singly linked list
+            print(self.output())
+
+        else:
+            # If the current node is None (We start at the head node of the linked list)
+            if current_node == None:
+                # Set the current node to be the head node
+                current_node = self.head_node
+
+            # Switch the current node's next node and previous nodes
+            current_node.next_node, prev_node = prev_node, current_node.next_node
+
+            # If the next node is None, it means we've reached the end of the linked list
+            if prev_node == None:
+                # Recursively call the method, feeding the current node as the current node in this call.
+                current_node = self.recursive_reverse_ll(current_node = current_node)
+            
+            # Otherwise, this means we are still traversing the linked list
+            if prev_node != None:
+                # Recursively call the method, feeding the the next node as current_node (prev_node is the next node). Also feed the current node we are in this call as prev_node
+                current_node = self.recursive_reverse_ll(current_node = prev_node, prev_node = current_node)
+
 my_linked_list = LinkedList()
 
 my_linked_list.replace_head_node(Node(20))
@@ -284,3 +312,6 @@ testing_list.find_middle_node()
 
 testing_list.iterative_reverse_ll() # Testing reverse
 testing_list.iterative_reverse_ll() # Reversing it back to original state
+print("-----------------------------------------------------------------------------------------------------")
+testing_list.recursive_reverse_ll()
+testing_list.output()
