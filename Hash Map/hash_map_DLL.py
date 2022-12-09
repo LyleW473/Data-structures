@@ -295,6 +295,7 @@ class HashMapDLL(HashMap):
 
             # If there is already a doubly linked list in the array at the array index
             else:
+                print("first array index", array_index)
                 # Add the current key:value pair to the end of the linked list
                 return_value = self.arrays[array_index][0].add_to_tail([key,value])
 
@@ -308,12 +309,47 @@ class HashMapDLL(HashMap):
                     original_array_index = array_index
 
                     # While we haven't found an empty space
-                    while self.arrays[array_index] != None:
+                    while True:
+                        # CHECKING ITEM AT INDEX 
+                        if self.arrays[array_index] == None:
+                            # Save the key and value at the array at the index
+                            self.arrays[array_index] = [key, value]
+                            print(f"The value, {value} has been saved to {array_index}.")
+                            break
+
+                        # If the key in the array at the array index has the same key   
+                        elif self.arrays[array_index][0] == key:
+                            # Replace the value at the array index with the new value
+                            self.arrays[array_index][1] = value
+                            print(f"The new value, {value} has been saved to {array_index}")
+                            break
+
+                        # If the key in the array does not have the same key, but has been given the same array index
+                        elif self.arrays[array_index][0] != key:
+                            # If there isn't already a doubly linked list in the array at the array index
+                            if type(self.arrays[array_index][0]) != DoublyLinkedList:
+                                print("Not the same key, create a doubly linked list")
+                                # Create a doubly linked list
+                                array_dll = DoublyLinkedList(max_size = 2)
+                                # Set the head node as the existing key:value pair
+                                array_dll.add_to_head(self.arrays[array_index])
+                                # Add the current key:value pair to the end of the linked list
+                                array_dll.add_to_tail([key, value])
+                                # Replace the current key:value pair in the array at the index 
+                                self.arrays[array_index] = [array_dll]
+                                break
+
+                            # If there is already a doubly linked list in the array at the array index
+                            else:
+                                print("first array index", array_index)
+                                # Add the current key:value pair to the end of the linked list
+                                return_value = self.arrays[array_index][0].add_to_tail([key,value])
+
 
                         # INCREMENTING / DECREMENTING
 
                         # If the array index is the same as the array size, don't increment the array index
-                        if array_index + 1 == self.array_size:
+                        if array_index + 1 >= self.array_size:
                             # Start decrementing the array index
                             start_decrementing = True
                             # Set the array index to start from the item to the left of the item in the original array index
@@ -336,35 +372,20 @@ class HashMapDLL(HashMap):
                                 # Increment the array index
                                 array_index += 1
 
-                        # CHECKING ITEM AT INDEX
-
-                        if self.arrays[array_index] == None:
-                            # Save the key and value at the array at the index
-                            self.arrays[array_index] = [key, value]
-                            print(f"The value, {value} has been saved to {array_index}.")
-                            break
-
-                        # If the key in the array at the array index has the same key   
-                        elif self.arrays[array_index][0] == key:
-                            # Replace the value at the array index with the new value
-                            self.arrays[array_index][1] = value
-                            print(f"The new value, {value} has been saved to {array_index}")
-                            break
-                
-
-            
     def retrieve(self, key):
         # Generate a hash code
         hash_code = self.hash(key)
         # Find the array index using the compressor
         array_index = self.compressor(hash_code)
 
+        print(key, hash_code, array_index)
+
         # If the array in the arrays is empty
         if self.arrays[array_index] == None:
             print("There is no value here.")
 
         # If the key in the array at the array index has the same key
-        elif self.arrays[array_index][0] == key:
+        elif self.arrays[array_index] == key:
             print(f"Returning value: {self.arrays[array_index][1]}")
             return self.arrays[array_index][1]
 
@@ -377,22 +398,63 @@ class HashMapDLL(HashMap):
 
                 # If the value returned was None, this means that it wasn't in this DLL. This could mean that the DLL was full and so the key:value pair was saved somewhere else.
                 if return_value == None:
-                    print("Not inside the DLL, so has been moved elsewhere")
-                    # Add linear probing collision checking here
+                    print("Not inside this DLL, so is somewhere else in the hash map.")
 
-                # If the value was correct
+                    # COLLISION RESOLVING
+                    
+                    start_decrementing = False
+                    original_array_index = array_index
+
+                    # While we haven't found the item
+                    while return_value == None:
+                        # CHECKING ITEM AT INDEX
+                        # If there is a doubly linked list at the current index 
+                        if type(self.arrays[array_index][0]) == DoublyLinkedList:
+                            # Search the doubly linked list for the value
+                            return_value = self.arrays[array_index][0].find_node(key)   
+                            
+                            
+                        # If there is no doubly linked list at the current index, it must mean that this is an array at this index
+                        elif type(self.arrays[array_index]) == list:
+                            # Return the value inside the array at the index
+                            print(f"Returning value: {self.arrays[array_index][1]}")
+                            return_value = self.arrays[array_index][1]
+                            
+
+                        # INCREMENTING / DECREMENTING
+                        # If the array index is the same as the array size, don't increment the array index
+                        if array_index + 1 == self.array_size:
+                            # Start decrementing the array index
+                            start_decrementing = True
+                            # Set the array index to start from the item to the left of the item in the original array index
+                            array_index = original_array_index - 1
+                            continue
+                        
+                        # Otherwise
+                        else:
+                            # If we have reached the end of the hash map and have started decrementing
+                            if start_decrementing == True:
+                                # Decrement the array index
+                                array_index -= 1
+
+                                # If the array index goes below 0, it means we have searched the entire hash map without finding an empty space
+                                if array_index < 0:
+                                    print("Item not found.")
+                                    break
+                            # If we haven't reached the end of the hash map
+                            else:
+                                # Increment the array index
+                                array_index += 1
+
+                # If the value was correct i.e. not None.
                 else:
                     return return_value
-
-
-                    
-
 
             
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
 
-my_hash_map_dll = HashMapDLL(3)
+my_hash_map_dll = HashMapDLL(10)
 print(my_hash_map_dll.arrays)
 
 # my_hash_map_dll.retrieve("Hello")
@@ -404,6 +466,18 @@ my_hash_map_dll.save("Zebra", "wheat")
 my_hash_map_dll.save("Pet", "builder")
 my_hash_map_dll.save("Rat", "plague")
 my_hash_map_dll.save("Peter", "Amazing")
-# my_hash_map_dll.retrieve("Zebra")
+my_hash_map_dll.save("Girw", "Twenty")
+my_hash_map_dll.save("nasa", "space")
+my_hash_map_dll.save("bass", 3)
+my_hash_map_dll.save("Circus", "clown")
+my_hash_map_dll.save("Lionu", 97)
+my_hash_map_dll.save("Zipz", 129)
 # my_hash_map_dll.retrieve("Hello")
 # my_hash_map_dll.retrieve("Bob")
+# my_hash_map_dll.retrieve("Girw")
+# my_hash_map_dll.retrieve("Ultra")
+# my_hash_map_dll.retrieve("Zebra")
+my_hash_map_dll.retrieve("Zipz")
+my_hash_map_dll.retrieve("Circus")
+
+print(my_hash_map_dll.arrays)
