@@ -52,8 +52,8 @@ class DoublyLinkedList:
             # Set the new tail node to be the tail node
             self.tail_node = new_tail_node
 
-        # If there is no tail node
-        if self.tail_node == None:
+        # If there is no tail node and head node
+        if self.tail_node == None and self.head_node == None:
             # Set the node passed into the function as the new tail node
             self.tail_node = new_tail_node
             # The new node will also be the new head node (if there was nothing before)
@@ -181,6 +181,47 @@ class HashMapDLL(HashMap):
     def __init__(self, array_size):
         super().__init__(array_size)
 
+        
+    def save(self, key, value):
+        # Generate a hash code
+        hash_code = self.hash(key)
+        # Find an array index using the compressor
+        array_index = self.compressor(hash_code)
+        print(key, value, hash_code, array_index)
+
+        # If the array in the arrays is empty
+        if self.arrays[array_index] == None:
+            # Save the key and value at the array at the index
+            self.arrays[array_index] = [key, value]
+            print(f"Value, {self.arrays[array_index][1]} has been saved to {array_index}.")
+
+        # If the key in the array at the array index has the same key   
+        elif self.arrays[array_index][0] == key:
+            # Replace the value at the array index with the new value
+            self.arrays[array_index][1] = value
+            print(f"The new value, {self.arrays[array_index][1]} has been saved to {array_index}")
+
+        # If the key in the array does not have the same key, but has been given the same array index
+        elif self.arrays[array_index][0] != key:
+            # If there isn't already a doubly linked list in the array at the array index
+            if type(self.arrays[array_index][0]) != DoublyLinkedList:
+                print("Not the same key, create a doubly linked list")
+                # Create a doubly linked list
+                array_dll = DoublyLinkedList()
+                # Set the head node as the existing key:value pair
+                array_dll.add_to_head(self.arrays[array_index])
+                # Add the current key:value pair to the end of the linked list
+                array_dll.add_to_tail([key, value])
+                # Replace the current key:value pair in the array at the index 
+                self.arrays[array_index] = [array_dll]
+
+            # If there is already a doubly linked list in the array at the array index
+            else:
+                # Add the current key:value pair to the end of the linked list
+                self.arrays[array_index][0].add_to_tail([key,value])
+            
+
+            
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
 
@@ -190,4 +231,5 @@ print(my_hash_map_dll.arrays)
 my_hash_map_dll.retrieve("Hello")
 my_hash_map_dll.save("Hello", "World")
 my_hash_map_dll.save("Hello", "test")
-print(my_hash_map_dll.arrays)
+my_hash_map_dll.save("Gsdau", "purple")
+my_hash_map_dll.save("Zebra", "wheat")
