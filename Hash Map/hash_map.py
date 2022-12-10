@@ -286,7 +286,9 @@ class HashMap:
 
                     break
 
-                
+    def clear(self):
+        # Replace the existing hash map with a new set of arrays
+        self.arrays = [None for array in range(self.array_size)]             
  
 my_hash_map = HashMap(5)   
 my_hash_map.retrieve("Hello")
@@ -308,9 +310,13 @@ print("------------------------------")
 # my_hash_map.retrieve("Noodles")
 #my_hash_map.retrieve("Puppy")
 
-my_hash_map.remove("Lyle")
-my_hash_map.remove("Hello")
-my_hash_map.remove("Rice")
-my_hash_map.remove("Bread")
-my_hash_map.remove("Goodk")
-my_hash_map.remove("dsakd")
+# my_hash_map.remove("Lyle")
+# my_hash_map.remove("Hello")
+# my_hash_map.remove("Rice")
+# my_hash_map.remove("Bread")
+# my_hash_map.remove("Goodk")
+# my_hash_map.remove("dsakd")
+
+print(my_hash_map.arrays)
+my_hash_map.clear()
+print(my_hash_map.arrays)

@@ -606,7 +606,11 @@ class HashMapDLL(HashMap):
                             else:
                                 # Increment the array index
                                 array_index += 1
-            
+
+    def clear(self):
+        # Replace the existing hash map with a new set of arrays
+        self.arrays = [None for array in range(self.array_size)]
+
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
 
@@ -636,21 +640,22 @@ my_hash_map_dll.save("Zipz", 129)
 my_hash_map_dll.retrieve("Zipz")
 my_hash_map_dll.retrieve("Circus")
 print("---------------------------")
-# Testing all situations for removing items
-my_hash_map_dll.remove("Peter")
-my_hash_map_dll.remove("Lionu")
-my_hash_map_dll.remove("Girw")
-my_hash_map_dll.remove("Hello")
-my_hash_map_dll.remove("Adobe")
-my_hash_map_dll.remove("Gsdau")
-my_hash_map_dll.remove("Pet")
-my_hash_map_dll.remove("Zebra")
-my_hash_map_dll.remove("Rat")
-my_hash_map_dll.remove("bass")
-my_hash_map_dll.remove("Circus")
-my_hash_map_dll.remove("nasa")
-my_hash_map_dll.remove("Zipz")
-my_hash_map_dll.remove("sdasd") # Testing output if the key does not exist
+# # Testing all situations for removing items
+# my_hash_map_dll.remove("Peter")
+# my_hash_map_dll.remove("Lionu")
+# my_hash_map_dll.remove("Girw")
+# my_hash_map_dll.remove("Hello")
+# my_hash_map_dll.remove("Adobe")
+# my_hash_map_dll.remove("Gsdau")
+# my_hash_map_dll.remove("Pet")
+# my_hash_map_dll.remove("Zebra")
+# my_hash_map_dll.remove("Rat")
+# my_hash_map_dll.remove("bass")
+# my_hash_map_dll.remove("Circus")
+# my_hash_map_dll.remove("nasa")
+# my_hash_map_dll.remove("Zipz")
+# my_hash_map_dll.remove("sdasd") # Testing output if the key does not exist
 
-
+print(my_hash_map_dll.arrays)
+my_hash_map_dll.clear()
 print(my_hash_map_dll.arrays)
