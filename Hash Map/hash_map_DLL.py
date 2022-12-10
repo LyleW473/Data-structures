@@ -94,13 +94,13 @@ class DoublyLinkedList:
         # FINDING THE NODE TO REMOVE
         
         # If the value of the current node at the start of the list is the same as the value of the node we want to remove
-        if start_current_node.node_val == node_value_to_remove:
+        if start_current_node.node_val[0] == node_value_to_remove:
             # Set the node to remove as the head node
             node_to_remove = self.head_node
 
 
         # If the value of the current node at the rear of the list is the same as the value of the node we want to remove
-        if rear_current_node.node_val == node_value_to_remove:
+        if rear_current_node.node_val[0] == node_value_to_remove:
             # Set the node to remove as the tail node
             node_to_remove = self.tail_node
 
@@ -117,12 +117,12 @@ class DoublyLinkedList:
                 break
             
             # Check if the value of the start current node is the same as the value of the node we want to remove
-            if start_current_node.node_val == node_value_to_remove:
+            if start_current_node.node_val[0] == node_value_to_remove:
                 # Set the node to remove to be the current node
                 node_to_remove = start_current_node
 
             # Check if the value of the rear current node is the same as the value of the node we want to remove
-            if rear_current_node.node_val == node_value_to_remove:
+            if rear_current_node.node_val[0] == node_value_to_remove:
                 # Set the node to remove to be the current node
                 node_to_remove = rear_current_node
 
@@ -157,8 +157,13 @@ class DoublyLinkedList:
             # Set the prev node pointer of the node after the node we want to remove to point to the previous node of the node we want to remove
             node_to_remove.next_node.prev_node = node_to_remove.prev_node
 
+
+
         # Output the current state of the list
         self.output()
+
+        # Return the node to remove (if it was None, None would have been returned already, so this addresses all other situations)
+        return node_to_remove
 
     def remove_head(self):
         # Set the new head node to be node after the current (old) head node
@@ -437,7 +442,7 @@ class HashMapDLL(HashMap):
                                 # Decrement the array index
                                 array_index -= 1
 
-                                # If the array index goes below 0, it means we have searched the entire hash map without finding an empty space
+                                # If the array index goes below 0, it means we have searched the entire hash map without finding the item
                                 if array_index < 0:
                                     print("Item not found.")
                                     break
@@ -450,6 +455,157 @@ class HashMapDLL(HashMap):
                 else:
                     return return_value
 
+    def remove(self, key):
+        # Generate a hash code
+        hash_code = self.hash(key)
+        # Find the array index using the compressor
+        array_index = self.compressor(hash_code)
+
+        print(key, hash_code, array_index)
+
+        # If the array in the arrays is empty
+        if self.arrays[array_index] == None:
+            print("There is no value here.")
+
+            # COLLISION RESOLVING
+            
+            start_decrementing = False
+            original_array_index = array_index
+            return_value = None
+
+            # While we haven't found the item
+            while return_value == None:
+                # CHECKING ITEM AT INDEX
+
+                # If the item at the index is None
+                if self.arrays[array_index] == None:
+                    print("There is no value here")
+
+                # If there is a doubly linked list at the current index 
+                elif type(self.arrays[array_index][0]) == DoublyLinkedList:
+                    # Search the doubly linked list for the value
+                    return_value = self.arrays[array_index][0].remove_node(key)  
+                    # Convert the linked list back into an array if it only has one item
+                    if self.arrays[array_index][0].head_node.node_val == self.arrays[array_index][0].tail_node.node_val:
+                        # Set the item at the index to be an array again
+                        self.arrays[array_index] = self.arrays[array_index][0].head_node.node_val
+                        print("Linked list converted into array.")
+
+                # If there is no doubly linked list at the current index, it must mean that this is an array at this index
+                elif type(self.arrays[array_index]) == list and self.arrays[array_index][0] == key:
+                    # Return the value inside the array at the index
+                    print(f"Removing value: {self.arrays[array_index]}")
+                    return_value = self.arrays[array_index][1]
+                    # Remove the item at the index
+                    self.arrays[array_index] = None
+                    
+
+                # INCREMENTING / DECREMENTING
+                # If the array index is the same as the array size, don't increment the array index
+                if array_index + 1 == self.array_size:
+                    # Start decrementing the array index
+                    start_decrementing = True
+                    # Set the array index to start from the item to the left of the item in the original array index
+                    array_index = original_array_index - 1
+                    continue
+                
+                # Otherwise
+                else:
+                    # If we have reached the end of the hash map and have started decrementing
+                    if start_decrementing == True:
+                        # Decrement the array index
+                        array_index -= 1
+
+                        # If the array index goes below 0, it means we have searched the entire hash map without finding the item we want to remove
+                        if array_index < 0:
+                            print("Item not found.")
+                            break
+                    # If we haven't reached the end of the hash map
+                    else:
+                        # Increment the array index
+                        array_index += 1
+
+        # If the key in the array at the array index has the same key
+        elif self.arrays[array_index][0] == key:
+            #print(f"Removing item: {self.arrays[array_index][0]} : {self.arrays[array_index][1]}")
+            print(f"Removed item: {self.arrays[array_index]}")
+            # Set the array at the index to be None
+            self.arrays[array_index] = None
+
+        # If the key in the array does not have the same key, 
+        elif self.arrays[array_index][0] != key or self.arrays[array_index] == None:
+            # If there is a doubly linked list at this array index
+            if type(self.arrays[array_index][0]) == DoublyLinkedList:
+                # Search the doubly linked list for the value
+                return_value = self.arrays[array_index][0].remove_node(key)
+
+                # Convert the linked list back into an array if it only has one item
+                if self.arrays[array_index][0].head_node.node_val == self.arrays[array_index][0].tail_node.node_val:
+                    # Set the item at the index to be an array again
+                    self.arrays[array_index] = self.arrays[array_index][0].head_node.node_val
+                    print("Linked list converted into array.")
+
+                # If the value returned was None, this means that it wasn't in this DLL. This could mean that the DLL was full and so the key:value pair was saved somewhere else.
+                if return_value == None:
+                    print("Not inside this DLL, so is somewhere else in the hash map.")
+
+                    # COLLISION RESOLVING
+                    
+                    start_decrementing = False
+                    original_array_index = array_index
+
+                    # While we haven't found the item
+                    while return_value == None:
+                        # CHECKING ITEM AT INDEX
+
+                        # If the item at the index is None
+                        if self.arrays[array_index] == None:
+                            print("There is no value here")
+
+                        # If there is a doubly linked list at the current index 
+                        elif type(self.arrays[array_index][0]) == DoublyLinkedList:
+                            # Search the doubly linked list for the value
+                            return_value = self.arrays[array_index][0].remove_node(key)  
+
+                            # Convert the linked list back into an array if it only has one item
+                            if self.arrays[array_index][0].head_node.node_val == self.arrays[array_index][0].tail_node.node_val:
+                                # Set the item at the index to be an array again
+                                self.arrays[array_index] = self.arrays[array_index][0].head_node.node_val
+                                print("Linked list converted into array.")
+
+                        # If there is no doubly linked list at the current index, it must mean that this is an array at this index
+                        elif type(self.arrays[array_index]) == list and self.arrays[array_index][0] == key:
+                            # Return the value inside the array at the index
+                            print(f"Removing value: {self.arrays[array_index]}")
+                            return_value = self.arrays[array_index][1]
+                            # Remove the item at the index
+                            self.arrays[array_index] = None
+                            
+
+                        # INCREMENTING / DECREMENTING
+                        # If the array index is the same as the array size, don't increment the array index
+                        if array_index + 1 == self.array_size:
+                            # Start decrementing the array index
+                            start_decrementing = True
+                            # Set the array index to start from the item to the left of the item in the original array index
+                            array_index = original_array_index - 1
+                            continue
+                        
+                        # Otherwise
+                        else:
+                            # If we have reached the end of the hash map and have started decrementing
+                            if start_decrementing == True:
+                                # Decrement the array index
+                                array_index -= 1
+
+                                # If the array index goes below 0, it means we have searched the entire hash map without finding the item we want to remove
+                                if array_index < 0:
+                                    print("Item not found.")
+                                    break
+                            # If we haven't reached the end of the hash map
+                            else:
+                                # Increment the array index
+                                array_index += 1
             
 print("------------------------------------------------------------------------------------------------------------------------------------------------")
 print("Doubly-linked list version")
@@ -479,5 +635,22 @@ my_hash_map_dll.save("Zipz", 129)
 # my_hash_map_dll.retrieve("Zebra")
 my_hash_map_dll.retrieve("Zipz")
 my_hash_map_dll.retrieve("Circus")
+print("---------------------------")
+# Testing all situations for removing items
+my_hash_map_dll.remove("Peter")
+my_hash_map_dll.remove("Lionu")
+my_hash_map_dll.remove("Girw")
+my_hash_map_dll.remove("Hello")
+my_hash_map_dll.remove("Adobe")
+my_hash_map_dll.remove("Gsdau")
+my_hash_map_dll.remove("Pet")
+my_hash_map_dll.remove("Zebra")
+my_hash_map_dll.remove("Rat")
+my_hash_map_dll.remove("bass")
+my_hash_map_dll.remove("Circus")
+my_hash_map_dll.remove("nasa")
+my_hash_map_dll.remove("Zipz")
+my_hash_map_dll.remove("sdasd") # Testing output if the key does not exist
+
 
 print(my_hash_map_dll.arrays)
