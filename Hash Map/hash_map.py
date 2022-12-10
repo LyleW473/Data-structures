@@ -182,8 +182,56 @@ class HashMap:
         if self.arrays[array_index] == None:
             print("There is no value here.")
 
+            # Collision handling    
+            start_decrementing = False
+            original_array_index = array_index # Saves the original array index so that if we check all the spaces to the right of the original array index, we want to go to the left starting from the original spot again
+
+            # While we haven't found the item we want to remove
+            while self.arrays[array_index] != key:
+                # INCREMENTING / DECREMENTING   
+
+                # If the array index is the same as the array size, don't increment the array index
+                if array_index + 1 == self.array_size:
+                    # Start decrementing the array index
+                    start_decrementing = True
+                    # Set the array index to start from the item to the left of the item in the original array index
+                    array_index = original_array_index - 1
+                    continue
+                
+                # Otherwise
+                else:
+                    # If we have reached the end of the hash map and have started decrementing
+                    if start_decrementing == True:
+                        # Decrement the array index
+                        array_index -= 1
+
+                        # If the array index goes below 0, it means we have searched the entire hash map without finding the item we want to remove
+                        if array_index < 0:
+                            print("Item not found.")
+                            break
+                    # If we haven't reached the end of the hash map
+                    else:
+                        # Increment the array index
+                        array_index += 1
+
+                # CHECKING ITEM AT INDEX
+
+                if self.arrays[array_index] == None: 
+                    print("There is no value here")
+                    pass
+
+                # If the key in the array at the array index has the same key   
+                elif self.arrays[array_index][0] == key:
+                    # Set the array at the index to be None (REMOVE THE ITEM)
+                    print(f"Item found at array index: {array_index}\n{self.arrays[array_index]} has been removed.")
+                    self.arrays[array_index] = None
+                    # Output the hash map
+                    print(self.arrays)
+
+                    break
+
         # If the key in the array at the array index has the same key   
-        if self.arrays[array_index][0] == key:
+        elif self.arrays[array_index][0] == key:
             # Set the array at the index to be None (REMOVE THE ITEM)
             print(f"Item found at array index: {array_index}\n{self.arrays[array_index]} has been removed.")
             self.arrays[array_index] = None
@@ -198,7 +246,7 @@ class HashMap:
             start_decrementing = False
             original_array_index = array_index # Saves the original array index so that if we check all the spaces to the right of the original array index, we want to go to the left starting from the original spot again
             
-            # While we haven't found an empty space
+            # While we haven't found the item we want to remove
             while self.arrays[array_index] != key:
                 # INCREMENTING / DECREMENTING
 
@@ -217,7 +265,7 @@ class HashMap:
                         # Decrement the array index
                         array_index -= 1
 
-                        # If the array index goes below 0, it means we have searched the entire hash map without finding an empty space
+                        # If the array index goes below 0, it means we have searched the entire hash map without finding the item we want to remove
                         if array_index < 0:
                             print("Item not found.")
                             break
@@ -262,3 +310,7 @@ print("------------------------------")
 
 my_hash_map.remove("Lyle")
 my_hash_map.remove("Hello")
+my_hash_map.remove("Rice")
+my_hash_map.remove("Bread")
+my_hash_map.remove("Goodk")
+my_hash_map.remove("dsakd")
